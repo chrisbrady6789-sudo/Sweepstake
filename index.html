@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏇 Grand National 2026 Sweepstake</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #e94560;
+            --gold: #ffd700;
+            --green-turf: #2d8a4e;
+            --green-dark: #1a5c2a;
+            --text-light: #eee;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            background: linear-gradient(90deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+            color: var(--gold);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border-bottom: 3px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,215,0,0.03) 40px, rgba(255,215,0,0.03) 80px);
+        }
+        .header h1 { font-size: 2.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px; position: relative; }
+        .header .subtitle { font-size: 1.1em; color: #fff; opacity: 0.9; position: relative; }
+        .header .race-date { font-size: 0.95em; color: var(--gold); opacity: 0.8; margin-top: 5px; position: relative; }
+
+        /* ============ NAV ============ */
+        .nav {
+            background: #0f0f23;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid rgba(255,215,0,0.2);
+        }
+        .nav button {
+            background: linear-gradient(180deg, #16213e 0%, #1a1a2e 100%);
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            padding: 10px 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        .nav button:hover, .nav button.active {
+            background: var(--gold);
+            color: #1a1a2e;
+        }
+
+        /* ============ LAYOUT ============ */
+        .container { max-width: 1300px; margin: 20px auto; padding: 20px; }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.25);
+        }
+        .card h2 {
+            color: var(--primary);
+            border-bottom: 3px solid var(--gold);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* ============ BUTTONS ============ */
+        .btn {
+            background: linear-gradient(180deg, #16213e 0%, #1a1a2e 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: linear-gradient(180deg, #2a3a5e 0%, #16213e 100%); transform: translateY(-2px); }
+        .btn-gold { background: linear-gradient(180deg, #ffd700 0%, #daa520 100%); color: #1a1a2e; }
+        .btn-gold:hover { background: linear-gradient(180deg, #ffe44d 0%, #ffd700 100%); }
+        .btn-accent { background: linear-gradient(180deg, #e94560 0%, #c23152 100%); color: white; }
+        .btn-green { background: linear-gradient(180deg, #2d8a4e 0%, #1a5c2a 100%); color: white; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-sm { padding: 6px 14px; font-size: 0.85em; }
+
+        .hidden { display: none !important; }
+
+        /* ============ COUNTDOWN ============ */
+        .countdown-container {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            border: 2px solid var(--gold);
+        }
+        .countdown-container h3 { color: var(--gold); margin-bottom: 15px; font-size: 1.3em; }
+        .countdown-boxes {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .countdown-box {
+            background: rgba(255,215,0,0.1);
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            padding: 15px 20px;
+            min-width: 80px;
+            text-align: center;
+        }
+        .countdown-box .number {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: var(--gold);
+            line-height: 1;
+        }
+        .countdown-box .label {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ============ DRAW WHEEL ============ */
+        .draw-section { text-align: center; }
+
+        .wheel-container {
+            position: relative;
+            margin: 30px auto;
+            width: 340px;
+            height: 340px;
+        }
+        .wheel-outer {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            border: 6px solid var(--gold);
+            box-shadow: 0 0 30px rgba(255,215,0,0.3), inset 0 0 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .wheel-canvas {
+            width: 328px;
+            height: 328px;
+        }
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 35px solid var(--accent);
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            border: 4px solid #1a1a2e;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .draw-result {
+            margin-top: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f0fff0 0%, #e8f5e9 100%);
+            border: 3px solid var(--green-turf);
+            border-radius: 12px;
+            display: none;
+        }
+        .draw-result.show { display: block; animation: fadeInUp 0.5s ease; }
+        .draw-result h3 { color: var(--green-dark); font-size: 1.5em; margin-bottom: 10px; }
+        .draw-result .horse-name { font-size: 2em; color: var(--primary); font-weight: bold; }
+        .draw-result .horse-odds { font-size: 1.3em; color: var(--accent); margin-top: 5px; }
+        .draw-result .luck-meter { margin-top: 15px; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============ PERSON SELECTOR ============ */
+        .person-selector {
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+        .person-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            font-size: 1.1em;
+            background: white;
+            color: #333;
+        }
+        .person-selector select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(233,69,96,0.2);
+        }
+
+        /* ============ HORSE CARDS ============ */
+        .horse-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .horse-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .horse-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-color: var(--gold);
+        }
+        .horse-card-header {
+            padding: 12px 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .horse-card-header .horse-number {
+            background: rgba(255,255,255,0.25);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+        .horse-card-body {
+            padding: 15px;
+        }
+        .horse-card-body h3 {
+            font-size: 1.15em;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        .horse-card-body .horse-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .horse-card-body .horse-info-row span:last-child {
+            font-weight: bold;
+            color: #333;
+        }
+        .horse-card-footer {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+        .horse-card-footer .drawn-by {
+            color: var(--green-dark);
+            font-weight: bold;
+        }
+        .horse-card-footer .odds-badge {
+            background: var(--primary);
+            color: var(--gold);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+
+        /* ============ SILKS ============ */
+        .silk-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            color: white;
+            font-weight: bold;
+            border: 2px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        /* ============ HORSE MODAL ============ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75); display: flex; justify-content: center;
+            align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; border-radius: 12px; max-width: 650px;
+            max-height: 90vh; overflow-y: auto; width: 92%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        .modal-header {
+            padding: 20px;
+            color: white;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .modal-header h2 { margin: 0; border: none; padding: 0; color: white; }
+        .modal-header .modal-subtitle { opacity: 0.9; margin-top: 4px; font-size: 0.9em; }
+        .modal-close {
+            background: none; border: none; color: white;
+            font-size: 2em; cursor: pointer; padding: 0; line-height: 1;
+        }
+        .modal-close:hover { opacity: 0.7; }
+        .modal-body { padding: 25px; }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        .stat-box .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .stat-box .stat-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chance-meter {
+            background: #e9ecef;
+            border-radius: 20px;
+            height: 24px;
+            overflow: hidden;
+            margin-top: 8px;
+            position: relative;
+        }
+        .chance-meter-fill {
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(90deg, var(--accent), var(--gold));
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .ai-writeup {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-left: 4px solid var(--gold);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+            font-style: italic;
+            line-height: 1.6;
+            color: #444;
+        }
+        .ai-writeup::before {
+            content: '🤖 AI Analysis';
+            display: block;
+            font-style: normal;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 0.9em;
+        }
+
+        /* ============ SWEEPSTAKE BOARD ============ */
+        .sweep-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+        }
+        .sweep-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--gold);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .sweep-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .sweep-card .person-name {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 0.95em;
+        }
+        .sweep-card .horse-assign {
+            color: #666;
+            font-size: 0.85em;
+        }
+        .sweep-card .horse-assign strong {
+            color: var(--accent);
+        }
+        .sweep-card.not-drawn {
+            opacity: 0.5;
+            border-left-color: #ccc;
+        }
+
+        /* ============ PREDICTIONS ============ */
+        .prediction-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .prediction-form .form-group {
+            margin-bottom: 15px;
+        }
+        .prediction-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .prediction-form select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .prediction-form select:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+        .prediction-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .prediction-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+        .prediction-card h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .prediction-card .pred-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 3px 0;
+            font-size: 0.9em;
+        }
+        .prediction-card .pred-medal {
+            font-size: 1.1em;
+        }
+
+        /* ============ RESULTS TABLE ============ */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .results-table th, .results-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .results-table th {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--gold);
+        }
+        .results-table tr:hover td {
+            background: #f0f4ff;
+        }
+        .results-table .winner-row td {
+            background: linear-gradient(90deg, #fff8dc, #ffd700, #fff8dc);
+            font-weight: bold;
+        }
+        .results-table .placed-row td {
+            background: #f0fff0;
+        }
+
+        /* ============ CONFETTI ============ */
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            top: -20px;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg) scale(0); opacity: 0; }
+        }
+
+        /* ============ ADMIN ============ */
+        .admin-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        .admin-section h2 { color: #856404; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .admin-grid textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.9em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--primary); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+        .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 10px 18px;
+            background: #f0f0f0;
+            border: 2px solid var(--primary);
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--primary);
+            color: var(--gold);
+        }
+
+        /* ============ LOADING ============ */
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(26,26,46,0.95); display: flex; justify-content: center;
+            align-items: center; z-index: 2000; flex-direction: column; color: white;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #333; border-top-color: var(--gold);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ============ FILTER / SEARCH ============ */
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+        .search-box:focus { border-color: var(--gold); outline: none; }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 6px 14px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--gold);
+            background: var(--gold);
+            color: var(--primary);
+        }
+
+        /* ============ SYNC STATUS ============ */
+        .sync-status {
+            position: fixed; bottom: 20px; right: 20px; padding: 10px 20px;
+            border-radius: 20px; font-size: 0.9em; z-index: 999;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .sync-status.connected { background: #28a745; color: white; }
+        .sync-status.disconnected { background: #dc3545; color: white; }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .header .subtitle { font-size: 0.95em; }
+            .nav { padding: 8px; gap: 5px; }
+            .nav button { padding: 8px 12px; font-size: 0.8em; }
+            .container { padding: 10px; }
+            .card { padding: 15px; }
+            .horse-grid { grid-template-columns: 1fr; }
+            .sweep-grid { grid-template-columns: 1fr; }
+            .prediction-board { grid-template-columns: 1fr; }
+            .countdown-boxes { gap: 8px; }
+            .countdown-box { min-width: 65px; padding: 10px 12px; }
+            .countdown-box .number { font-size: 1.6em; }
+            .wheel-container { width: 280px; height: 280px; }
+            .wheel-outer { width: 280px; height: 280px; }
+            .wheel-canvas { width: 268px; height: 268px; }
+            .admin-grid { grid-template-columns: 1fr; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .modal-content { width: 96%; }
+            .btn { padding: 12px 18px; font-size: 1em; }
+            .sync-status { bottom: 10px; right: 10px; padding: 8px 12px; font-size: 0.8em; }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.3em; }
+            .nav button { padding: 7px 10px; font-size: 0.75em; }
+            .horse-grid { grid-template-columns: 1fr; }
+            .countdown-box { min-width: 55px; padding: 8px; }
+            .countdown-box .number { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loadingText">Loading Sweepstake...</div>
+</div>
+
+<!-- Confetti Container -->
+<div id="confettiContainer" class="confetti-container"></div>
+
+<!-- Sync Status -->
+<div id="syncStatus" class="sync-status disconnected">
+    <span id="syncIcon">🔴</span>
+    <span id="syncText">Offline</span>
+</div>
+
+<!-- Header -->
+<div class="header">
+    <h1>🏇 Grand National 2026 Sweepstake</h1>
+    <div class="subtitle">Aintree Racecourse, Liverpool</div>
+    <div class="race-date">Saturday 11th April 2026 • 5:15 PM</div>
+</div>
+
+<!-- Navigation -->
+<div class="nav" id="mainNav">
+    <button onclick="showPage('home')" id="nav-home" class="active">🏠 Home</button>
+    <button onclick="showPage('draw')" id="nav-draw">🎰 The Draw</button>
+    <button onclick="showPage('runners')" id="nav-runners">🐎 Runners</button>
+    <button onclick="showPage('sweepstake')" id="nav-sweepstake">📋 Sweepstake</button>
+    <button onclick="showPage('predictions')" id="nav-predictions">🔮 Predictions</button>
+    <button onclick="showPage('raceday')" id="nav-raceday">🏁 Race Day</button>
+    <button onclick="showPage('admin')" id="nav-admin" class="hidden">⚙️ Admin</button>
+</div>
+
+<!-- Horse Detail Modal -->
+<div id="horseModal" class="modal-overlay hidden" onclick="closeHorseModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header" id="modalHeader">
+            <div>
+                <h2 id="modalHorseName">Horse</h2>
+                <div class="modal-subtitle" id="modalHorseSubtitle"></div>
+            </div>
+            <button class="modal-close" onclick="closeHorseModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalHorseBody"></div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ==================== HOME PAGE ==================== -->
+    <div id="homePage">
+        <div class="countdown-container" id="countdownContainer">
+            <h3>⏱️ Countdown to the Grand National</h3>
+            <div class="countdown-boxes" id="countdownBoxes"></div>
+        </div>
+
+        <div class="card">
+            <h2>🏇 Welcome to the Grand National 2026 Sweepstake!</h2>
+            <div style="line-height: 1.8; font-size: 1.05em;">
+                <p>Welcome to the greatest steeplechase in the world! This year we have <strong>34 runners</strong> and <strong>34 brave sweepstake participants</strong>.</p>
+                <br>
+                <p><strong>How it works:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Each person draws <strong>one horse</strong> at random from the 34 runners</li>
+                    <li>Head to <strong>"The Draw"</strong> tab to spin the wheel and reveal your horse</li>
+                    <li>Check out the <strong>"Runners"</strong> tab for full details on all 34 horses</li>
+                    <li>Click any horse card to read an <strong>AI-generated form guide</strong> and chances assessment</li>
+                    <li>Submit your <strong>Top 3 prediction</strong> in the Predictions tab before the race</li>
+                    <li>Watch it unfold on <strong>Race Day!</strong></li>
+                </ul>
+                <br>
+                <p style="text-align: center; margin-top: 15px;">
+                    <strong style="font-size: 1.2em;">🏆 Prize Pool: Winner takes it all!</strong>
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Sweepstake Status</h2>
+            <div id="homeStatus">
+                <p>Loading status...</p>
+            </div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, #fff8dc, #fff3cd); border: 2px solid var(--gold);">
+            <h2 style="color: #856404;">💡 Quick Guide</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+                <div style="text-align: center; padding: 15px;">
+                    <div style="font-size: 2.5em; margin-bottom: 8px;">🎰</div>
+                    <strong>Step 1</strong><br>Select your name and spin the wheel to draw your horse
+                </div>
+                <div style="text-align: center; padding: 15px;">
+                    <div style="font-size: 2.5em; margin-bottom: 8px;">🐎</div>
+                    <strong>Step 2</strong><br>Check out your horse's profile and chances
+                </div>
+                <div style="text-align: center; padding: 15px;">
+                    <div style="font-size: 2.5em; margin-bottom: 8px;">🔮</div>
+                    <strong>Step 3</strong><br>Predict the Top 3 finishers before the race
+                </div>
+                <div style="text-align: center; padding: 15px;">
+                    <div style="font-size: 2.5em; margin-bottom: 8px;">🏆</div>
+                    <strong>Step 4</strong><br>Watch the race and see if your horse wins!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== DRAW PAGE ==================== -->
+    <div id="drawPage" class="hidden">
+        <div class="card draw-section">
+            <h2>🎰 Draw Your Horse</h2>
+            <p style="margin-bottom: 20px; color: #666;">Select your name below and spin the wheel to find out which horse you've drawn!</p>
+
+            <div class="person-selector">
+                <select id="personSelect" onchange="onPersonSelect()">
+                    <option value="">-- Select Your Name --</option>
+                </select>
+            </div>
+
+            <div id="alreadyDrawn" class="hidden" style="padding: 20px; background: #e8f5e9; border-radius: 10px; margin-bottom: 20px;">
+                <h3 style="color: var(--green-dark);">✅ You've already drawn your horse!</h3>
+                <div id="alreadyDrawnInfo" style="margin-top: 10px;"></div>
+            </div>
+
+            <div id="drawControls" class="hidden">
+                <div class="wheel-container" id="wheelContainer">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel-outer">
+                        <canvas id="wheelCanvas" class="wheel-canvas" width="328" height="328"></canvas>
+                    </div>
+                    <div class="wheel-center">🏇</div>
+                </div>
+
+                <button class="btn btn-gold" id="spinBtn" onclick="spinWheel()" style="font-size: 1.2em; padding: 15px 40px; margin-top: 20px;">
+                    🎰 SPIN THE WHEEL!
+                </button>
+            </div>
+
+            <div id="drawResult" class="draw-result">
+                <h3>🎉 Congratulations!</h3>
+                <div id="drawResultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== RUNNERS PAGE ==================== -->
+    <div id="runnersPage" class="hidden">
+        <div class="card">
+            <h2>🐎 Runners & Riders</h2>
+            <p style="margin-bottom: 15px; color: #666;">Click any horse to view their full profile and AI analysis.</p>
+            <input type="text" class="search-box" id="horseSearch" placeholder="🔍 Search horses, jockeys, or trainers..." oninput="filterHorses()">
+            <div class="filter-bar" id="oddsFilter">
+                <button class="filter-btn active" onclick="filterByOdds('all', this)">All</button>
+                <button class="filter-btn" onclick="filterByOdds('favourite', this)">⭐ Favourites</button>
+                <button class="filter-btn" onclick="filterByOdds('mid', this)">📊 Mid-Range</button>
+                <button class="filter-btn" onclick="filterByOdds('outsider', this)">🎲 Outsiders</button>
+            </div>
+            <div class="horse-grid" id="horseGrid"></div>
+        </div>
+    </div>
+
+    <!-- ==================== SWEEPSTAKE BOARD PAGE ==================== -->
+    <div id="sweepstakePage" class="hidden">
+        <div class="card">
+            <h2>📋 Sweepstake Board</h2>
+            <p style="margin-bottom: 15px; color: #666;">Who has drawn which horse? The full sweepstake at a glance.</p>
+            <div class="sweep-grid" id="sweepGrid"></div>
+        </div>
+    </div>
+
+    <!-- ==================== PREDICTIONS PAGE ==================== -->
+    <div id="predictionsPage" class="hidden">
+        <div class="card">
+            <h2>🔮 Predict the Top 3</h2>
+            <p style="margin-bottom: 20px; color: #666;">Think you know who'll win? Submit your prediction for the Top 3 finishers before the race!</p>
+
+            <div class="prediction-form">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <select id="predictionPerson" onchange="loadExistingPrediction()">
+                        <option value="">-- Select Your Name --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>🥇 1st Place</label>
+                    <select id="pred1"><option value="">-- Select Horse --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>🥈 2nd Place</label>
+                    <select id="pred2"><option value="">-- Select Horse --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>🥉 3rd Place</label>
+                    <select id="pred3"><option value="">-- Select Horse --</option></select>
+                </div>
+                <button class="btn btn-gold" onclick="submitPrediction()" style="width: 100%;">Submit Prediction</button>
+                <div id="predictionMessage" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 All Predictions</h2>
+            <div class="prediction-board" id="predictionBoard">
+                <p style="color: #999;">No predictions submitted yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== RACE DAY PAGE ==================== -->
+    <div id="racedayPage" class="hidden">
+        <div class="card">
+            <h2>🏁 Race Day - Results</h2>
+            <div id="raceNotStarted">
+                <div class="countdown-container" style="margin-bottom: 0;">
+                    <h3>🐎 The race hasn't started yet!</h3>
+                    <p style="margin-top: 10px;">Come back on <strong>Saturday 11th April 2026 at 5:15 PM</strong>.</p>
+                    <p style="margin-top: 10px; opacity: 0.8;">Results will be entered here after the race finishes.</p>
+                </div>
+            </div>
+            <div id="raceResults" class="hidden">
+                <div style="overflow-x: auto;">
+                    <table class="results-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Pos</th>
+                                <th>Horse</th>
+                                <th>Jockey</th>
+                                <th>Odds</th>
+                                <th>Drawn By</th>
+                                <th>Winnings</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN PAGE ==================== -->
+    <div id="adminPage" class="hidden">
+        <div class="card admin-section">
+            <h2>⚙️ Admin Panel</h2>
+
+            <div class="tab-bar">
+                <div class="tab-btn active" onclick="showAdminTab('draw-admin')">Draw Control</div>
+                <div class="tab-btn" onclick="showAdminTab('horses-admin')">Manage Horses</div>
+                <div class="tab-btn" onclick="showAdminTab('people-admin')">Manage People</div>
+                <div class="tab-btn" onclick="showAdminTab('results-admin')">Enter Results</div>
+                <div class="tab-btn" onclick="showAdminTab('data-admin')">Data</div>
+            </div>
+
+            <!-- Draw Control -->
+            <div id="adminTab-draw-admin">
+                <h3>🎰 Draw Control</h3>
+                <p style="margin-bottom: 15px;">Control the sweepstake draw process.</p>
+                <div class="form-group">
+                    <label><input type="checkbox" id="drawOpen" onchange="toggleDraw()"> Draw is open (people can spin the wheel)</label>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="predictionsOpen" onchange="togglePredictions()"> Predictions are open</label>
+                </div>
+                <button class="btn btn-accent" onclick="resetAllDraws()" style="margin-top: 10px;">Reset All Draws</button>
+                <button class="btn" onclick="autoDrawAll()" style="margin-top: 10px; margin-left: 10px;">Auto-Draw All Remaining</button>
+            </div>
+
+            <!-- Manage Horses -->
+            <div id="adminTab-horses-admin" class="hidden">
+                <h3>🐎 Manage Horses</h3>
+                <p style="margin-bottom: 10px;">Paste horse data as JSON. Each horse needs: name, number, jockey, trainer, age, weight, odds, oddsDecimal, color, aiWriteup.</p>
+                <textarea id="horsesJson" style="width:100%; min-height: 300px; font-family: monospace; font-size: 0.85em;"></textarea>
+                <br>
+                <button class="btn btn-gold" onclick="saveHorsesFromJson()" style="margin-top: 10px;">Save Horses</button>
+                <button class="btn" onclick="loadHorsesToTextarea()" style="margin-top: 10px; margin-left: 10px;">Load Current Data</button>
+            </div>
+
+            <!-- Manage People -->
+            <div id="adminTab-people-admin" class="hidden">
+                <h3>👥 Manage People</h3>
+                <p style="margin-bottom: 10px;">Enter one name per line.</p>
+                <textarea id="peopleList" style="width:100%; min-height: 200px; font-family: monospace;"></textarea>
+                <br>
+                <button class="btn btn-gold" onclick="savePeopleList()" style="margin-top: 10px;">Save People</button>
+                <button class="btn" onclick="loadPeopleToTextarea()" style="margin-top: 10px; margin-left: 10px;">Load Current</button>
+            </div>
+
+            <!-- Enter Results -->
+            <div id="adminTab-results-admin" class="hidden">
+                <h3>🏁 Enter Race Results</h3>
+                <p style="margin-bottom: 15px;">Enter the final race result. Select horses in finishing order.</p>
+                <div id="resultsEntryForm"></div>
+                <button class="btn btn-gold" onclick="saveResults()" style="margin-top: 15px;">Save Results</button>
+            </div>
+
+            <!-- Data -->
+            <div id="adminTab-data-admin" class="hidden">
+                <h3>💾 Data Management</h3>
+                <button class="btn" onclick="exportData()">Export All Data (JSON)</button>
+                <button class="btn" onclick="document.getElementById('importFile').click()" style="margin-left: 10px;">Import Data</button>
+                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                <div id="dataMessage" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+//  FIREBASE CONFIG — Replace with your own project details
+// ============================================================
+const firebaseConfig = {
+    apiKey: "AIzaSyCefS9to5Aa9MBcHrbB3iPhWMYtZn7aueU",
+    authDomain: "brady-sweepstake.firebaseapp.com",
+    databaseURL: "https://brady-sweepstake-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "brady-sweepstake",
+    storageBucket: "brady-sweepstake.firebasestorage.app",
+    messagingSenderId: "681548388554",
+    appId: "1:681548388554:web:4d2771822b2946518abc33"
+};
+
+let db;
+let firebaseReady = false;
+
+// ============================================================
+//  DUMMY DATA — Replace with real data when available
+// ============================================================
+const DEFAULT_HORSES = [
+    { number: 1, name: "Doyen Quest", jockey: "Rachael Blackmore", trainer: "Henry de Bromhead", age: 9, weight: "11-10", odds: "8/1", oddsDecimal: 9.0, color: "#1a5276", colorSecondary: "#f1c40f", aiWriteup: "A consistent performer over fences who has shown a real aptitude for the marathon distance. Won impressively at Cheltenham last time out and has solid form at Aintree. The ground conditions should suit perfectly, and with Blackmore in the saddle, this one has every chance. Key weakness is a tendency to jump right-handed which could prove costly on this left-handed track. One to watch.", chance: 72 },
+    { number: 2, name: "Noble Doyen", jockey: "Paul Townend", trainer: "Willie Mullins", age: 10, weight: "11-8", odds: "10/1", oddsDecimal: 11.0, color: "#27ae60", colorSecondary: "#fff", aiWriteup: "The Mullins-Townend combination is always one to respect in the big races. This horse has form figures that read well, though questions remain about stamina for the extreme distance. Not the most fluent of jumpers. Has been freshened up nicely for this and the Mullins team will have him spot on. Could surprise if jumping holds up over 30 fences.", chance: 65 },
+    { number: 3, name: "Aintree Legend", jockey: "Sam Twiston-Davies", trainer: "Paul Nicholls", age: 8, weight: "11-6", odds: "12/1", oddsDecimal: 13.0, color: "#e74c3c", colorSecondary: "#fff", aiWriteup: "Named after the racecourse itself, this horse has something to live up to! Two strong runs over the National fences in toppers suggest he's well suited to the unique challenge. Not the flashiest, but tough and genuine. Could grind it out late on. Trainer knows what's needed and the jockey gives a good ride over these fences. Each-way value.", chance: 58 },
+    { number: 4, name: "Celtic Thunder", jockey: "Jack Kennedy", trainer: "Gordon Elliott", age: 9, weight: "11-5", odds: "14/1", oddsDecimal: 15.0, color: "#8e44ad", colorSecondary: "#f39c12", aiWriteup: "A big, strong chaser who stays all day and jumps well. Won a valuable handicap at Leopardstown and has been pointed at this race all season. The Elliott yard targeting the National is always a threat. The only concern is whether the horse has the toe to get into a challenging position turning for home. Should get round safely at least.", chance: 52 },
+    { number: 5, name: "Storm Runner", jockey: "Davy Russell", trainer: "Denise Foster", age: 10, weight: "11-4", odds: "16/1", oddsDecimal: 17.0, color: "#2c3e50", colorSecondary: "#e74c3c", aiWriteup: "A course and distance winner who relishes the unique Aintree challenge. Two previous completes over the National fences give great course form. Getting on in years but still showing plenty of zest. Has been lightly raced this season which could be a positive — or a concern. Best on soft ground which he may not get.", chance: 48 },
+    { number: 6, name: "Midnight Star", jockey: "Harry Cobden", trainer: "Paul Nicholls", age: 9, weight: "11-3", odds: "16/1", oddsDecimal: 17.0, color: "#1a1a2e", colorSecondary: "#ffd700", aiWriteup: "Progressing nicely over fences and looked a potential National horse when winning a 3m4f chase at Newbury. Questions about the extreme 4m2f trip but breeding suggests he should stay. Nicholls has targeted this race and the yard is in great form. Harry Cobden is riding with confidence. Dark horse who could outrun his odds.", chance: 47 },
+    { number: 7, name: "Ballybrook", jockey: "Sean O'Keeffe", trainer: "Emmet Mullins", age: 8, weight: "11-2", odds: "18/1", oddsDecimal: 19.0, color: "#16a085", colorSecondary: "#ecf0f1", aiWriteup: "A talented young chaser from the Mullins family stable. Won a Grade 3 at Punchestown and shaped with promise on his only start at the big fences. Still relatively inexperienced which cuts both ways — plenty of improvement to come, but the National demands experience. Will need things to go his way but has the raw ability to be competitive.", chance: 44 },
+    { number: 8, name: "Kings Gambit", jockey: "Nico de Boinville", trainer: "Nicky Henderson", age: 10, weight: "11-1", odds: "20/1", oddsDecimal: 21.0, color: "#d35400", colorSecondary: "#fff", aiWriteup: "A tough, battle-hardened chaser who goes on most ground. Has plenty of experience at the top level, though a Grade 1 win has eluded him. The Henderson stable know what it takes to prepare a National horse. The 20/1 price might offer value if things drop right. Stamina guaranteed, needs a clear round over the big fences.", chance: 40 },
+    { number: 9, name: "Galway Bay", jockey: "Mark Walsh", trainer: "Willie Mullins", age: 9, weight: "11-0", odds: "20/1", oddsDecimal: 21.0, color: "#2980b9", colorSecondary: "#ffd700", aiWriteup: "The second Mullins runner and one whose form over extreme distances is rock solid. Won the Kerry National and the Thyestes Chase, both quality staying handicaps. Gets in here on a decent weight and should relish every yard of the marathon trip. The question mark is jumping — not always the tidiest and the National fences are unforgiving.", chance: 42 },
+    { number: 10, name: "Red Vandal", jockey: "Brian Hughes", trainer: "Lucinda Russell", age: 10, weight: "10-13", odds: "22/1", oddsDecimal: 23.0, color: "#c0392b", colorSecondary: "#2c3e50", aiWriteup: "The Lucinda Russell stable won this race with One For Arthur and know the preparation needed. This horse is tough, stays forever, and isn't flashy but gets the job done. Brian Hughes is a top-class jockey who deserves a National win. The price reflects the horse's limitations at top level, but this is the National — anything can happen.", chance: 38 },
+    { number: 11, name: "Whiskey Sour", jockey: "Derek Fox", trainer: "Lucinda Russell", age: 11, weight: "10-12", odds: "25/1", oddsDecimal: 26.0, color: "#f39c12", colorSecondary: "#2c3e50", aiWriteup: "A veteran of the staying chase division whose form figures include a creditable finish in last year's National. Age is catching up but the experience is invaluable over these demanding fences. Gallops along at a steady pace and stays forever. Needs things to fall right but has run well off this mark before. Handy each-way player.", chance: 35 },
+    { number: 12, name: "Harbour Wind", jockey: "Aidan Coleman", trainer: "Venetia Williams", age: 9, weight: "10-11", odds: "25/1", oddsDecimal: 26.0, color: "#3498db", colorSecondary: "#fff", aiWriteup: "The Venetia Williams yard excels with staying chasers and this one has been trained for the National. Loves soft ground and has the stamina to get home. Has won twice over 3m5f+ and the form ties in nicely. The jockey is in excellent form. Could be one that stays on strongly when others are tiring approaching the elbow. Worth a look.", chance: 36 },
+    { number: 13, name: "Blazing Saddle", jockey: "Sam Waley-Cohen", trainer: "Kim Bailey", age: 10, weight: "10-10", odds: "28/1", oddsDecimal: 29.0, color: "#e67e22", colorSecondary: "#ecf0f1", aiWriteup: "A fun runner with plenty of National-style qualities — stays well, jumps soundly, and handles the testing conditions. The amateur rider adds an element of romance to the story. Won a couple of decent handicaps this season and has been laid out for this. Not the most talented but gutsy and honest. Could plug on into a place at a big price.", chance: 32 },
+    { number: 14, name: "Copper Canyon", jockey: "Danny Mullins", trainer: "Gordon Elliott", age: 9, weight: "10-9", odds: "28/1", oddsDecimal: 29.0, color: "#d68910", colorSecondary: "#1a5276", aiWriteup: "The second Elliott runner in the field and one who has been aimed at the race since a promising run in the Becher Chase in December. Handles the big fences well and stays strongly. Has more ability than his current mark suggests. Danny Mullins is a fine rider for this type of race. Interesting contender at the price.", chance: 34 },
+    { number: 15, name: "Artful Shadow", jockey: "Robbie Power", trainer: "Jessica Harrington", age: 8, weight: "10-8", odds: "33/1", oddsDecimal: 34.0, color: "#7d3c98", colorSecondary: "#aed6f1", aiWriteup: "A well-bred chaser who has been slightly under the radar this season. The Harrington yard doesn't have many National runners but knows how to train a big-race horse. The young age is a concern — the youngest in the field — and stamina is unproven at this trip. But there's plenty of raw ability and at 33/1, you don't need much to go right.", chance: 28 },
+    { number: 16, name: "Border Express", jockey: "Craig Nichol", trainer: "Sandy Thomson", age: 10, weight: "10-7", odds: "33/1", oddsDecimal: 34.0, color: "#1abc9c", colorSecondary: "#e74c3c", aiWriteup: "A popular horse from a smaller yard that punches above its weight. Won the Edinburgh National and has form over extreme distances. The Scottish-trained runner could be anything on the big day — the form is solid enough and the weight is manageable. Not the most fashionable but could run a huge race at a big price.", chance: 27 },
+    { number: 17, name: "Lucky Charm", jockey: "Jonjo O'Neill Jr", trainer: "Jonjo O'Neill", age: 11, weight: "10-6", odds: "33/1", oddsDecimal: 34.0, color: "#28b463", colorSecondary: "#f1c40f", aiWriteup: "The name alone makes people want to back this horse! Don Heron's staying chaser has won point-to-points and bumpers before progressing through the ranks. Very much a stayer who plods along at one pace but rarely falls. Jonjo Jr rides well over the big fences. Veteran who knows what he's doing — could sneak into places at a huge price.", chance: 25 },
+    { number: 18, name: "Dublin Rock", jockey: "Keith Donoghue", trainer: "Noel Meade", age: 10, weight: "10-5", odds: "40/1", oddsDecimal: 41.0, color: "#154360", colorSecondary: "#48c9b0", aiWriteup: "A proper tough Irish chaser who has won a Troytown and run well in several big handicaps. Noel Meade knows how to prepare horses for gruelling staying chases. The 40/1 price undersells the chance somewhat — this horse has all the prerequisites for the National: stamina, jumping ability, and toughness. Don't discount.", chance: 24 },
+    { number: 19, name: "Fennels Bay", jockey: "Patrick Mullins", trainer: "Willie Mullins", age: 9, weight: "10-4", odds: "40/1", oddsDecimal: 41.0, color: "#117864", colorSecondary: "#fdebd0", aiWriteup: "The third Mullins-trained runner, ridden by the trainer's son, an accomplished amateur. This horse has been building a profile over staying trips in Ireland. Not tested at the highest level but the Mullins team wouldn't bring him if they didn't think he had a chance. Amateur-ridden in the National adds extra intrigue. Outsider with a squeak.", chance: 22 },
+    { number: 20, name: "Singing Steel", jockey: "Tom Cannon", trainer: "Alan King", age: 10, weight: "10-3", odds: "40/1", oddsDecimal: 41.0, color: "#5d6d7e", colorSecondary: "#f4d03f", aiWriteup: "A steady, reliable chaser from the Alan King yard. Has put together a sequence of placed efforts in staying chases this season without winning. The National is a different test entirely and this horse's jumping is sound enough. Unlikely winner but could fill a place in a truly run race. Needs pace to be strong throughout.", chance: 20 },
+    { number: 21, name: "Shady Operator", jockey: "Brendan Powell", trainer: "Tom George", age: 11, weight: "10-2", odds: "50/1", oddsDecimal: 51.0, color: "#4a235a", colorSecondary: "#abebc6", aiWriteup: "An enigmatic chaser who has shown flashes of high-class form between some disappointing runs. On his day, good enough to win off this mark. But consistency is the issue. If everything clicks on the day, could run a massive race, but equally could pull up or fall. The name is apt — you never quite know what you'll get.", chance: 18 },
+    { number: 22, name: "Mountain Fox", jockey: "James Bowen", trainer: "Peter Bowen", age: 10, weight: "10-1", odds: "50/1", oddsDecimal: 51.0, color: "#873600", colorSecondary: "#d5f5e3", aiWriteup: "The family-trained runner with the Bowen combo who have saddled plenty of National runners over the years. This one is genuine, stays strongly, and handles testing conditions. Not the fastest but rarely stops trying. At 50/1 he's a proper outsider but stranger things have happened in the Grand National. Could be in the mix late on.", chance: 17 },
+    { number: 23, name: "West Coast", jockey: "Kielan Woods", trainer: "Ben Case", age: 9, weight: "10-0", odds: "50/1", oddsDecimal: 51.0, color: "#2e86c1", colorSecondary: "#f0b27a", aiWriteup: "A horse with plenty of scope from a small but capable yard. Has won a couple of nice handicaps and shapes like the National trip will suit. Relatively unexposed over the big fences which is a worry, but there's ability in the locker. At 50/1, he's one for those who like a speculative each-way bet. Needs luck in running.", chance: 16 },
+    { number: 24, name: "Supreme River", jockey: "Tom Scudamore", trainer: "David Pipe", age: 10, weight: "10-0", odds: "50/1", oddsDecimal: 51.0, color: "#0e6655", colorSecondary: "#fadbd8", aiWriteup: "David Pipe won this race with Comply Or Die and still knows the formula. Supreme River is a solid stayer who jumps adequately and goes on any ground. Tom Scudamore has ridden many National runners and knows the course inside out. At the price, there's some value if you believe the Pipe stable can conjure another big-race surprise.", chance: 18 },
+    { number: 25, name: "Midnight Oil", jockey: "Ben Jones", trainer: "Ben Pauling", age: 11, weight: "9-13", odds: "66/1", oddsDecimal: 67.0, color: "#1c2833", colorSecondary: "#f7dc6f", aiWriteup: "A veteran campaigner whose best days may be behind him, but the National is a race where experience counts double. Has run in two previous Nationals, completing the course once in a creditable 12th. The light weight is a positive and Ben Jones is a capable rider. Long shot but has the know-how to get round safely and hit the board.", chance: 14 },
+    { number: 26, name: "Celtic Dream", jockey: "David Bass", trainer: "Kim Bailey", age: 9, weight: "9-12", odds: "66/1", oddsDecimal: 67.0, color: "#196f3d", colorSecondary: "#fad7a0", aiWriteup: "The second runner from the Kim Bailey stable and one that is exposed but consistent. Never quite good enough to win anything above class 3 level but always gives his running. The National is an equaliser and this horse's stamina and honesty could see him arrive late in the piece. Very much a dark horse at a big price.", chance: 13 },
+    { number: 27, name: "Iron Duke", jockey: "Paddy Brennan", trainer: "Fergal O'Brien", age: 10, weight: "9-11", odds: "66/1", oddsDecimal: 67.0, color: "#515a5a", colorSecondary: "#e74c3c", aiWriteup: "A solid handicapper who grinds it out. Paddy Brennan is a top-class rider who won the Gold Cup on Imperial Commander and knows what it takes in the big races. The horse is a safe jumper who stays well. At 66/1, most people would dismiss him, but the jockey booking alone makes this one worth a second look.", chance: 15 },
+    { number: 28, name: "Dancing Lane", jockey: "Charlie Deutsch", trainer: "Venetia Williams", age: 9, weight: "9-10", odds: "80/1", oddsDecimal: 81.0, color: "#a93226", colorSecondary: "#aed6f1", aiWriteup: "The second Venetia Williams runner and one that is very much a work in progress over fences. Has shown some useful form on heavy ground but the big Aintree fences are a different proposition. The 80/1 odds reflect the uncertainty. Needs everything to go right and a fair amount of luck. For the dreamers only.", chance: 10 },
+    { number: 29, name: "Pharaoh King", jockey: "Jordan Gainford", trainer: "Gordon Elliott", age: 8, weight: "9-9", odds: "80/1", oddsDecimal: 81.0, color: "#b7950b", colorSecondary: "#1a5276", aiWriteup: "The third Elliott runner and one that is here for the experience as much as anything. Young and still learning but has shown enough over hurdles and fences to suggest there's talent there. This will be a massive education. Whether he can put it all together on the biggest stage at his first attempt is the question. Rank outsider.", chance: 10 },
+    { number: 30, name: "Silver Blaze", jockey: "Jamie Moore", trainer: "Gary Moore", age: 11, weight: "9-8", odds: "80/1", oddsDecimal: 81.0, color: "#bdc3c7", colorSecondary: "#2c3e50", aiWriteup: "The Moore family runner whose name evokes Sherlock Holmes! An 11-year-old who has been racing for years and has seen it all. Knows how to jump and saves energy for the finish. At 80/1, the market isn't giving him much hope, but this horse could plod his way into a place if many fall around him. Veteran's chance.", chance: 11 },
+    { number: 31, name: "Rebel Song", jockey: "Sean Flanagan", trainer: "Noel Meade", age: 10, weight: "9-7", odds: "100/1", oddsDecimal: 101.0, color: "#cb4335", colorSecondary: "#f9e79f", aiWriteup: "The second Meade runner and one that is here largely to make up the numbers, though connections would argue otherwise. Has decent staying form in Ireland but hasn't been able to compete at the top level. The 100/1 odds say it all. But the National is the one race where 100/1 shots have won before — think Mon Mome in 2009!", chance: 8 },
+    { number: 32, name: "Valley Prince", jockey: "Adam Wedge", trainer: "Evan Williams", age: 10, weight: "9-6", odds: "100/1", oddsDecimal: 101.0, color: "#7b241c", colorSecondary: "#d4efdf", aiWriteup: "A Welsh-trained runner who has won a couple of decent handicaps in the winter. The step up to National level is a big ask but the horse stays all day and the light weight is a big advantage. Adam Wedge rides the course well. At 100/1, you're hoping for a miracle, but this is the race where miracles happen. Worth a charity ticket.", chance: 7 },
+    { number: 33, name: "Harbour Breeze", jockey: "Denis O'Regan", trainer: "Philip Hobbs", age: 11, weight: "9-5", odds: "100/1", oddsDecimal: 101.0, color: "#1f618d", colorSecondary: "#f8c471", aiWriteup: "An honest old campaigner who has been placed in numerous decent handicaps without ever suggesting he could win the National. Denis O'Regan won the race on Mon Mome so knows the track well. The horse will give everything and might pick up some minor prizemoney if getting round. True rank outsider who will enjoy the experience.", chance: 6 },
+    { number: 34, name: "Wild Spirit", jockey: "Ciaran Gethings", trainer: "Jim Dreaper", age: 9, weight: "9-4", odds: "100/1", oddsDecimal: 101.0, color: "#0b5345", colorSecondary: "#eb984e", aiWriteup: "The fairy-tale entry from a small Irish stable steeped in Grand National history — Jim Dreaper's grandfather Tom trained three National winners. At 100/1, the horse is the ultimate outsider, but the family connection to the race gives this one an extra layer of romance. Has shown he stays and jumps, which is half the battle. For the romantics.", chance: 8 }
+];
+
+const DEFAULT_PEOPLE = [
+    "Alice", "Bob", "Charlie", "Diana", "Edward",
+    "Fiona", "George", "Hannah", "Ivan", "Julia",
+    "Kevin", "Laura", "Michael", "Nora", "Oscar",
+    "Penny", "Quentin", "Rachel", "Steve", "Tina",
+    "Ulrich", "Vera", "William", "Xena", "Yusuf",
+    "Zoe", "Aidan", "Bridget", "Ciaran", "Deirdre",
+    "Eoin", "Grainne", "Hugh", "Siobhan"
+];
+
+// ============================================================
+//  APP STATE
+// ============================================================
+let appState = {
+    horses: [],
+    people: [],
+    draws: {},        // { personName: horseNumber }
+    predictions: {},  // { personName: { first: horseNum, second: horseNum, third: horseNum } }
+    results: [],      // [{ position: 1, horseNumber: X }, ...]
+    settings: {
+        drawOpen: true,
+        predictionsOpen: true,
+        adminPassword: 'grandnational2026'
+    }
+};
+
+let currentPage = 'home';
+let wheelSpinning = false;
+let countdownInterval;
+
+// ============================================================
+//  INIT
+// ============================================================
+function init() {
+    try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+        firebaseReady = true;
+        setupFirebaseListeners();
+        document.getElementById('syncStatus').className = 'sync-status connected';
+        document.getElementById('syncIcon').textContent = '🟢';
+        document.getElementById('syncText').textContent = 'Connected';
+    } catch (e) {
+        console.log('Firebase not configured, using local storage:', e.message);
+        firebaseReady = false;
+        loadFromLocalStorage();
+        document.getElementById('syncStatus').className = 'sync-status disconnected';
+        document.getElementById('syncIcon').textContent = '🟡';
+        document.getElementById('syncText').textContent = 'Local Mode';
+    }
+
+    hideLoading();
+    startCountdown();
+    renderAll();
+    checkAdminAccess();
+}
+
+function setupFirebaseListeners() {
+    db.ref('sweepstake').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            appState.horses = data.horses || DEFAULT_HORSES;
+            appState.people = data.people || DEFAULT_PEOPLE;
+            appState.draws = data.draws || {};
+            appState.predictions = data.predictions || {};
+            appState.results = data.results || [];
+            appState.settings = { ...appState.settings, ...(data.settings || {}) };
+        } else {
+            // First run — seed with defaults
+            appState.horses = DEFAULT_HORSES;
+            appState.people = DEFAULT_PEOPLE;
+            saveToFirebase();
+        }
+        renderAll();
+    });
+}
+
+function saveToFirebase() {
+    if (firebaseReady) {
+        db.ref('sweepstake').set({
+            horses: appState.horses,
+            people: appState.people,
+            draws: appState.draws,
+            predictions: appState.predictions,
+            results: appState.results,
+            settings: appState.settings
+        });
+    }
+    saveToLocalStorage();
+}
+
+function loadFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem('sweepstake_data');
+        if (saved) {
+            const data = JSON.parse(saved);
+            appState.horses = data.horses || DEFAULT_HORSES;
+            appState.people = data.people || DEFAULT_PEOPLE;
+            appState.draws = data.draws || {};
+            appState.predictions = data.predictions || {};
+            appState.results = data.results || [];
+            appState.settings = { ...appState.settings, ...(data.settings || {}) };
+        } else {
+            appState.horses = DEFAULT_HORSES;
+            appState.people = DEFAULT_PEOPLE;
+        }
+    } catch {
+        appState.horses = DEFAULT_HORSES;
+        appState.people = DEFAULT_PEOPLE;
+    }
+}
+
+function saveToLocalStorage() {
+    localStorage.setItem('sweepstake_data', JSON.stringify(appState));
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function showPage(page) {
+    const pages = ['home', 'draw', 'runners', 'sweepstake', 'predictions', 'raceday', 'admin'];
+    pages.forEach(p => {
+        document.getElementById(p + 'Page').classList.add('hidden');
+        const navBtn = document.getElementById('nav-' + p);
+        if (navBtn) navBtn.classList.remove('active');
+    });
+    document.getElementById(page + 'Page').classList.remove('hidden');
+    const activeNav = document.getElementById('nav-' + page);
+    if (activeNav) activeNav.classList.add('active');
+    currentPage = page;
+
+    if (page === 'draw') renderDrawPage();
+    if (page === 'runners') renderRunnersPage();
+    if (page === 'sweepstake') renderSweepstakePage();
+    if (page === 'predictions') renderPredictionsPage();
+    if (page === 'raceday') renderRaceDayPage();
+    if (page === 'admin') renderAdminPage();
+}
+
+// ============================================================
+//  COUNTDOWN
+// ============================================================
+function startCountdown() {
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+    const raceDate = new Date('2026-04-11T17:15:00+01:00'); // BST
+    const now = new Date();
+    const diff = raceDate - now;
+
+    const container = document.getElementById('countdownBoxes');
+    if (diff <= 0) {
+        container.innerHTML = '<div style="font-size: 1.5em; color: var(--gold);">🏁 The race has started! 🏇</div>';
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    container.innerHTML = `
+        <div class="countdown-box"><div class="number">${days}</div><div class="label">Days</div></div>
+        <div class="countdown-box"><div class="number">${hours}</div><div class="label">Hours</div></div>
+        <div class="countdown-box"><div class="number">${minutes}</div><div class="label">Mins</div></div>
+        <div class="countdown-box"><div class="number">${seconds}</div><div class="label">Secs</div></div>
+    `;
+}
+
+// ============================================================
+//  RENDER ALL
+// ============================================================
+function renderAll() {
+    renderHomeStatus();
+    if (currentPage === 'draw') renderDrawPage();
+    if (currentPage === 'runners') renderRunnersPage();
+    if (currentPage === 'sweepstake') renderSweepstakePage();
+    if (currentPage === 'predictions') renderPredictionsPage();
+    if (currentPage === 'raceday') renderRaceDayPage();
+}
+
+function renderHomeStatus() {
+    const totalPeople = appState.people.length;
+    const drawnCount = Object.keys(appState.draws).length;
+    const predictionsCount = Object.keys(appState.predictions).length;
+    const horsesCount = appState.horses.length;
+
+    document.getElementById('homeStatus').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 10px;">
+            <div style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 20px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5em; font-weight: bold; color: var(--green-dark);">${horsesCount}</div>
+                <div style="color: #666; margin-top: 4px;">🐎 Runners</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 20px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5em; font-weight: bold; color: #1565c0;">${totalPeople}</div>
+                <div style="color: #666; margin-top: 4px;">👥 Participants</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #fff8e1, #ffecb3); padding: 20px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5em; font-weight: bold; color: #f57f17;">${drawnCount}/${totalPeople}</div>
+                <div style="color: #666; margin-top: 4px;">🎰 Horses Drawn</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #fce4ec, #f8bbd0); padding: 20px; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5em; font-weight: bold; color: #c62828;">${predictionsCount}</div>
+                <div style="color: #666; margin-top: 4px;">🔮 Predictions</div>
+            </div>
+        </div>
+    `;
+}
+
+// ============================================================
+//  DRAW PAGE
+// ============================================================
+function renderDrawPage() {
+    const select = document.getElementById('personSelect');
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">-- Select Your Name --</option>';
+    appState.people.sort().forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        select.appendChild(opt);
+    });
+    if (currentVal) select.value = currentVal;
+    onPersonSelect();
+}
+
+function onPersonSelect() {
+    const name = document.getElementById('personSelect').value;
+    const alreadyDrawn = document.getElementById('alreadyDrawn');
+    const drawControls = document.getElementById('drawControls');
+    const drawResult = document.getElementById('drawResult');
+
+    alreadyDrawn.classList.add('hidden');
+    drawControls.classList.add('hidden');
+    drawResult.classList.remove('show');
+
+    if (!name) return;
+
+    if (appState.draws[name]) {
+        const horse = appState.horses.find(h => h.number === appState.draws[name]);
+        alreadyDrawn.classList.remove('hidden');
+        if (horse) {
+            document.getElementById('alreadyDrawnInfo').innerHTML = `
+                <p style="font-size: 1.3em; margin-top: 8px;"><strong>${horse.name}</strong></p>
+                <p style="color: #666;">No. ${horse.number} • ${horse.odds} • Jockey: ${horse.jockey}</p>
+                <div style="margin-top: 10px;">
+                    <div class="silk-icon" style="background: ${horse.color}; display: inline-flex; width: 45px; height: 45px; font-size: 1em;">${horse.number}</div>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    if (!appState.settings.drawOpen) {
+        alreadyDrawn.classList.remove('hidden');
+        document.getElementById('alreadyDrawnInfo').innerHTML = '<p style="color: #e74c3c;">The draw is currently closed. Please wait for the admin to open it.</p>';
+        return;
+    }
+
+    drawControls.classList.remove('hidden');
+    drawWheel();
+}
+
+// ============================================================
+//  WHEEL SPIN
+// ============================================================
+function getAvailableHorses() {
+    const drawnHorseNumbers = new Set(Object.values(appState.draws));
+    return appState.horses.filter(h => !drawnHorseNumbers.has(h.number));
+}
+
+function drawWheel() {
+    const available = getAvailableHorses();
+    if (available.length === 0) return;
+
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = canvas.width / 2 - 5;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const segmentAngle = (2 * Math.PI) / available.length;
+
+    available.forEach((horse, i) => {
+        const startAngle = i * segmentAngle;
+        const endAngle = startAngle + segmentAngle;
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = horse.color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Label
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(startAngle + segmentAngle / 2);
+        ctx.fillStyle = '#fff';
+        ctx.font = `bold ${Math.max(8, Math.min(12, 300 / available.length))}px sans-serif`;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        const labelText = available.length > 20 ? `${horse.number}` : `${horse.number}. ${horse.name.substring(0, 10)}`;
+        ctx.fillText(labelText, radius - 10, 0);
+        ctx.restore();
+    });
+}
+
+function spinWheel() {
+    if (wheelSpinning) return;
+    const name = document.getElementById('personSelect').value;
+    if (!name) return;
+
+    const available = getAvailableHorses();
+    if (available.length === 0) { alert('No horses left!'); return; }
+
+    wheelSpinning = true;
+    document.getElementById('spinBtn').disabled = true;
+
+    // Pick random horse
+    const randomIndex = Math.floor(Math.random() * available.length);
+    const selectedHorse = available[randomIndex];
+
+    // Calculate target rotation
+    const segmentAngle = 360 / available.length;
+    // The pointer is at top (270° in canvas coords, which is -90° or effectively 0 visual)
+    // We want the selected segment to end up under the pointer
+    const targetSegment = randomIndex;
+    // Spin several full rotations + land on target
+    const extraRotations = 5 + Math.floor(Math.random() * 5);
+    const targetAngle = 360 - (targetSegment * segmentAngle + segmentAngle / 2) + 270;
+    const totalRotation = extraRotations * 360 + targetAngle;
+
+    const canvas = document.getElementById('wheelCanvas');
+    let currentRotation = 0;
+    const startTime = performance.now();
+    const duration = 4000 + Math.random() * 2000;
+
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
+
+    function animateWheel(timestamp) {
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = easeOutCubic(progress);
+
+        currentRotation = totalRotation * eased;
+        canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+        if (progress < 1) {
+            requestAnimationFrame(animateWheel);
+        } else {
+            // Spin complete!
+            wheelSpinning = false;
+            document.getElementById('spinBtn').disabled = false;
+
+            // Save the draw
+            appState.draws[name] = selectedHorse.number;
+            saveToFirebase();
+
+            // Show result
+            showDrawResult(name, selectedHorse);
+            launchConfetti();
+        }
+    }
+
+    requestAnimationFrame(animateWheel);
+}
+
+function showDrawResult(name, horse) {
+    const resultDiv = document.getElementById('drawResult');
+    const luckLevel = horse.chance > 50 ? '🔥 HOT FAVOURITE!' :
+                      horse.chance > 30 ? '👍 Solid Chance!' :
+                      horse.chance > 15 ? '🤞 You\'ll Need Some Luck!' :
+                      '🍀 Miracle Territory!';
+
+    const luckColor = horse.chance > 50 ? '#28a745' :
+                      horse.chance > 30 ? '#17a2b8' :
+                      horse.chance > 15 ? '#ffc107' :
+                      '#dc3545';
+
+    document.getElementById('drawResultContent').innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+            <div class="silk-icon" style="background: ${horse.color}; width: 60px; height: 60px; font-size: 1.3em;">${horse.number}</div>
+            <div>
+                <div class="horse-name">${horse.name}</div>
+                <div class="horse-odds">${horse.odds}</div>
+            </div>
+        </div>
+        <p>Jockey: <strong>${horse.jockey}</strong> | Trainer: <strong>${horse.trainer}</strong></p>
+        <p style="margin-top: 5px;">Age: ${horse.age} | Weight: ${horse.weight}</p>
+        <div class="luck-meter" style="margin-top: 15px;">
+            <p style="font-weight: bold; color: ${luckColor}; font-size: 1.2em;">${luckLevel}</p>
+            <div class="chance-meter" style="margin-top: 8px;">
+                <div class="chance-meter-fill" style="width: ${horse.chance}%; background: linear-gradient(90deg, ${luckColor}, var(--gold));">
+                    ${horse.chance}%
+                </div>
+            </div>
+            <p style="margin-top: 5px; color: #999; font-size: 0.85em;">AI Win Probability</p>
+        </div>
+        <button class="btn btn-sm" onclick="openHorseModal(${horse.number})" style="margin-top: 15px;">📖 Read Full Profile</button>
+    `;
+
+    resultDiv.classList.add('show');
+
+    // Hide the draw controls
+    document.getElementById('drawControls').classList.add('hidden');
+}
+
+// ============================================================
+//  CONFETTI
+// ============================================================
+function launchConfetti() {
+    const container = document.getElementById('confettiContainer');
+    container.innerHTML = '';
+    const colors = ['#ffd700', '#e94560', '#28a745', '#17a2b8', '#ff6b6b', '#48dbfb', '#ff9ff3', '#feca57'];
+
+    for (let i = 0; i < 80; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+        piece.style.animationDelay = Math.random() * 0.8 + 's';
+        const shapes = ['50%', '0%', '30%'];
+        piece.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
+        piece.style.width = (6 + Math.random() * 10) + 'px';
+        piece.style.height = (6 + Math.random() * 10) + 'px';
+        container.appendChild(piece);
+    }
+
+    setTimeout(() => { container.innerHTML = ''; }, 5000);
+}
+
+// ============================================================
+//  RUNNERS PAGE
+// ============================================================
+function renderRunnersPage() {
+    const grid = document.getElementById('horseGrid');
+    grid.innerHTML = '';
+
+    const horses = [...appState.horses].sort((a, b) => a.number - b.number);
+    const drawReverse = {};
+    Object.entries(appState.draws).forEach(([person, horseNum]) => {
+        drawReverse[horseNum] = person;
+    });
+
+    horses.forEach(horse => {
+        const drawnBy = drawReverse[horse.number];
+        const card = document.createElement('div');
+        card.className = 'horse-card';
+        card.setAttribute('data-odds', horse.oddsDecimal);
+        card.setAttribute('data-name', horse.name.toLowerCase());
+        card.setAttribute('data-jockey', horse.jockey.toLowerCase());
+        card.setAttribute('data-trainer', horse.trainer.toLowerCase());
+        card.onclick = () => openHorseModal(horse.number);
+
+        card.innerHTML = `
+            <div class="horse-card-header" style="background: linear-gradient(135deg, ${horse.color}, ${horse.colorSecondary || '#333'});">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="silk-icon" style="background: rgba(0,0,0,0.2);">${horse.number}</div>
+                    <span style="font-weight: bold; font-size: 1.05em;">${horse.name}</span>
+                </div>
+                <span class="horse-number">${horse.odds}</span>
+            </div>
+            <div class="horse-card-body">
+                <div class="horse-info-row"><span>Jockey</span><span>${horse.jockey}</span></div>
+                <div class="horse-info-row"><span>Trainer</span><span>${horse.trainer}</span></div>
+                <div class="horse-info-row"><span>Age</span><span>${horse.age}</span></div>
+                <div class="horse-info-row"><span>Weight</span><span>${horse.weight}</span></div>
+            </div>
+            <div class="horse-card-footer">
+                <span class="drawn-by">${drawnBy ? '👤 ' + drawnBy : '⏳ Not drawn'}</span>
+                <span class="odds-badge">${horse.odds}</span>
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+function filterHorses() {
+    const query = document.getElementById('horseSearch').value.toLowerCase();
+    document.querySelectorAll('.horse-card').forEach(card => {
+        const matchesName = card.getAttribute('data-name').includes(query);
+        const matchesJockey = card.getAttribute('data-jockey').includes(query);
+        const matchesTrainer = card.getAttribute('data-trainer').includes(query);
+        card.style.display = (matchesName || matchesJockey || matchesTrainer) ? '' : 'none';
+    });
+}
+
+function filterByOdds(filter, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.horse-card').forEach(card => {
+        const odds = parseFloat(card.getAttribute('data-odds'));
+        let show = true;
+        if (filter === 'favourite') show = odds <= 20;
+        else if (filter === 'mid') show = odds > 20 && odds <= 50;
+        else if (filter === 'outsider') show = odds > 50;
+        card.style.display = show ? '' : 'none';
+    });
+}
+
+// ============================================================
+//  HORSE MODAL
+// ============================================================
+function openHorseModal(horseNumber) {
+    const horse = appState.horses.find(h => h.number === horseNumber);
+    if (!horse) return;
+
+    const drawReverse = {};
+    Object.entries(appState.draws).forEach(([person, num]) => { drawReverse[num] = person; });
+    const drawnBy = drawReverse[horse.number];
+
+    document.getElementById('modalHeader').style.background = `linear-gradient(135deg, ${horse.color}, ${horse.colorSecondary || '#333'})`;
+    document.getElementById('modalHorseName').textContent = `${horse.number}. ${horse.name}`;
+    document.getElementById('modalHorseSubtitle').textContent = `${horse.jockey} | ${horse.trainer}`;
+
+    const chanceLabel = horse.chance > 50 ? 'Strong Contender' :
+                        horse.chance > 30 ? 'In The Mix' :
+                        horse.chance > 15 ? 'Outsider With Chance' :
+                        'Rank Outsider';
+
+    document.getElementById('modalHorseBody').innerHTML = `
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="stat-value">${horse.odds}</div>
+                <div class="stat-label">Odds</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">${horse.age}</div>
+                <div class="stat-label">Age</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">${horse.weight}</div>
+                <div class="stat-label">Weight</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">${horse.chance}%</div>
+                <div class="stat-label">Win Chance</div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <strong>AI Win Probability</strong>
+                <span style="color: var(--accent); font-weight: bold;">${chanceLabel}</span>
+            </div>
+            <div class="chance-meter">
+                <div class="chance-meter-fill" style="width: ${horse.chance}%;">${horse.chance}%</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div><strong>Jockey:</strong> ${horse.jockey}</div>
+            <div><strong>Trainer:</strong> ${horse.trainer}</div>
+        </div>
+
+        ${drawnBy ? `<div style="padding: 12px; background: #e8f5e9; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+            <strong>🎰 Drawn by: ${drawnBy}</strong>
+        </div>` : '<div style="padding: 12px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px; text-align: center;"><strong>⏳ Not yet drawn</strong></div>'}
+
+        <div class="ai-writeup">
+            ${horse.aiWriteup}
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 8px;">
+                <div class="silk-icon" style="background: ${horse.color}; width: 50px; height: 50px; font-size: 1.1em;">${horse.number}</div>
+                <div style="text-align: left;">
+                    <div style="font-weight: bold; color: var(--primary);">${horse.name}</div>
+                    <div style="color: #666; font-size: 0.9em;">Good luck! 🍀</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('horseModal').classList.remove('hidden');
+}
+
+function closeHorseModal() {
+    document.getElementById('horseModal').classList.add('hidden');
+}
+
+// ============================================================
+//  SWEEPSTAKE BOARD
+// ============================================================
+function renderSweepstakePage() {
+    const grid = document.getElementById('sweepGrid');
+    grid.innerHTML = '';
+
+    const sortedPeople = [...appState.people].sort();
+
+    sortedPeople.forEach(person => {
+        const horseNum = appState.draws[person];
+        const horse = horseNum ? appState.horses.find(h => h.number === horseNum) : null;
+
+        const card = document.createElement('div');
+        card.className = 'sweep-card' + (horse ? '' : ' not-drawn');
+        if (horse) card.style.cursor = 'pointer';
+        if (horse) card.onclick = () => openHorseModal(horse.number);
+
+        card.innerHTML = `
+            <div class="silk-icon" style="background: ${horse ? horse.color : '#ccc'}; ${horse ? '' : 'opacity: 0.4;'}">
+                ${horse ? horse.number : '?'}
+            </div>
+            <div>
+                <div class="person-name">${person}</div>
+                <div class="horse-assign">
+                    ${horse ? `<strong>${horse.name}</strong> (${horse.odds})` : 'Not drawn yet'}
+                </div>
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+// ============================================================
+//  PREDICTIONS
+// ============================================================
+function renderPredictionsPage() {
+    // Person selector
+    const personSelect = document.getElementById('predictionPerson');
+    const currentVal = personSelect.value;
+    personSelect.innerHTML = '<option value="">-- Select Your Name --</option>';
+    appState.people.sort().forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        personSelect.appendChild(opt);
+    });
+    if (currentVal) personSelect.value = currentVal;
+
+    // Horse selects
+    ['pred1', 'pred2', 'pred3'].forEach(id => {
+        const sel = document.getElementById(id);
+        const currentHorseVal = sel.value;
+        sel.innerHTML = '<option value="">-- Select Horse --</option>';
+        [...appState.horses].sort((a, b) => a.number - b.number).forEach(h => {
+            const opt = document.createElement('option');
+            opt.value = h.number;
+            opt.textContent = `${h.number}. ${h.name} (${h.odds})`;
+            sel.appendChild(opt);
+        });
+        if (currentHorseVal) sel.value = currentHorseVal;
+    });
+
+    // Render existing predictions
+    renderPredictionBoard();
+    loadExistingPrediction();
+}
+
+function loadExistingPrediction() {
+    const name = document.getElementById('predictionPerson').value;
+    if (!name || !appState.predictions[name]) return;
+
+    const pred = appState.predictions[name];
+    document.getElementById('pred1').value = pred.first || '';
+    document.getElementById('pred2').value = pred.second || '';
+    document.getElementById('pred3').value = pred.third || '';
+}
+
+function submitPrediction() {
+    const name = document.getElementById('predictionPerson').value;
+    const first = parseInt(document.getElementById('pred1').value);
+    const second = parseInt(document.getElementById('pred2').value);
+    const third = parseInt(document.getElementById('pred3').value);
+
+    if (!name) { showPredMsg('Please select your name!', 'red'); return; }
+    if (!first || !second || !third) { showPredMsg('Please select all three positions!', 'red'); return; }
+    if (first === second || first === third || second === third) {
+        showPredMsg('Please select three different horses!', 'red'); return;
+    }
+    if (!appState.settings.predictionsOpen) {
+        showPredMsg('Predictions are closed!', 'red'); return;
+    }
+
+    appState.predictions[name] = { first, second, third };
+    saveToFirebase();
+    showPredMsg('✅ Prediction saved!', 'green');
+    renderPredictionBoard();
+}
+
+function showPredMsg(msg, color) {
+    const el = document.getElementById('predictionMessage');
+    el.innerHTML = `<p style="color: ${color}; font-weight: bold;">${msg}</p>`;
+    setTimeout(() => { el.innerHTML = ''; }, 4000);
+}
+
+function renderPredictionBoard() {
+    const board = document.getElementById('predictionBoard');
+    const predictions = appState.predictions;
+
+    if (!predictions || Object.keys(predictions).length === 0) {
+        board.innerHTML = '<p style="color: #999;">No predictions submitted yet.</p>';
+        return;
+    }
+
+    board.innerHTML = '';
+    Object.entries(predictions).sort(([a], [b]) => a.localeCompare(b)).forEach(([person, pred]) => {
+        const h1 = appState.horses.find(h => h.number === pred.first);
+        const h2 = appState.horses.find(h => h.number === pred.second);
+        const h3 = appState.horses.find(h => h.number === pred.third);
+
+        const card = document.createElement('div');
+        card.className = 'prediction-card';
+        card.innerHTML = `
+            <h4>👤 ${person}</h4>
+            <div class="pred-row"><span class="pred-medal">🥇</span> ${h1 ? h1.name : 'Unknown'}</div>
+            <div class="pred-row"><span class="pred-medal">🥈</span> ${h2 ? h2.name : 'Unknown'}</div>
+            <div class="pred-row"><span class="pred-medal">🥉</span> ${h3 ? h3.name : 'Unknown'}</div>
+        `;
+        board.appendChild(card);
+    });
+}
+
+// ============================================================
+//  RACE DAY
+// ============================================================
+function renderRaceDayPage() {
+    const results = appState.results;
+    if (!results || results.length === 0) {
+        document.getElementById('raceNotStarted').classList.remove('hidden');
+        document.getElementById('raceResults').classList.add('hidden');
+        return;
+    }
+
+    document.getElementById('raceNotStarted').classList.add('hidden');
+    document.getElementById('raceResults').classList.remove('hidden');
+
+    const tbody = document.getElementById('resultsBody');
+    tbody.innerHTML = '';
+
+    const drawReverse = {};
+    Object.entries(appState.draws).forEach(([person, num]) => { drawReverse[num] = person; });
+
+    results.forEach(result => {
+        const horse = appState.horses.find(h => h.number === result.horseNumber);
+        if (!horse) return;
+
+        const drawnBy = drawReverse[horse.number] || '-';
+        const isWinner = result.position === 1;
+        const isPlaced = result.position <= 3;
+
+        const tr = document.createElement('tr');
+        tr.className = isWinner ? 'winner-row' : (isPlaced ? 'placed-row' : '');
+
+        const posLabel = result.position === 1 ? '🥇 1st' :
+                         result.position === 2 ? '🥈 2nd' :
+                         result.position === 3 ? '🥉 3rd' :
+                         result.position + 'th';
+
+        const winnings = result.position === 1 ? '💰 Winner!' :
+                         result.position === 2 ? '💵 2nd Place' :
+                         result.position === 3 ? '💵 3rd Place' : '-';
+
+        tr.innerHTML = `
+            <td>${posLabel}</td>
+            <td><strong>${horse.name}</strong></td>
+            <td>${horse.jockey}</td>
+            <td>${horse.odds}</td>
+            <td><strong>${drawnBy}</strong></td>
+            <td>${winnings}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ============================================================
+//  ADMIN
+// ============================================================
+function checkAdminAccess() {
+    // Simple admin toggle — query param ?admin=grandnational2026
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === appState.settings.adminPassword) {
+        document.getElementById('nav-admin').classList.remove('hidden');
+    }
+}
+
+function showAdminTab(tabId) {
+    document.querySelectorAll('[id^="adminTab-"]').forEach(el => el.classList.add('hidden'));
+    document.getElementById('adminTab-' + tabId).classList.remove('hidden');
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if (tabId === 'results-admin') renderResultsAdmin();
+    if (tabId === 'draw-admin') renderDrawAdmin();
+}
+
+function renderDrawAdmin() {
+    document.getElementById('drawOpen').checked = appState.settings.drawOpen;
+    document.getElementById('predictionsOpen').checked = appState.settings.predictionsOpen;
+}
+
+function renderAdminPage() {
+    renderDrawAdmin();
+}
+
+function toggleDraw() {
+    appState.settings.drawOpen = document.getElementById('drawOpen').checked;
+    saveToFirebase();
+}
+
+function togglePredictions() {
+    appState.settings.predictionsOpen = document.getElementById('predictionsOpen').checked;
+    saveToFirebase();
+}
+
+function resetAllDraws() {
+    if (!confirm('Are you sure you want to reset ALL draws? This cannot be undone!')) return;
+    appState.draws = {};
+    saveToFirebase();
+    renderAll();
+    alert('All draws have been reset.');
+}
+
+function autoDrawAll() {
+    const undrawn = appState.people.filter(p => !appState.draws[p]);
+    const available = getAvailableHorses();
+
+    if (undrawn.length === 0) { alert('Everyone has drawn!'); return; }
+    if (available.length < undrawn.length) { alert('Not enough horses available!'); return; }
+    if (!confirm(`Auto-draw for ${undrawn.length} remaining people?`)) return;
+
+    const shuffled = [...available].sort(() => Math.random() - 0.5);
+    undrawn.forEach((person, i) => {
+        appState.draws[person] = shuffled[i].number;
+    });
+    saveToFirebase();
+    renderAll();
+    alert('All remaining draws completed!');
+}
+
+// Manage Horses
+function loadHorsesToTextarea() {
+    document.getElementById('horsesJson').value = JSON.stringify(appState.horses, null, 2);
+}
+
+function saveHorsesFromJson() {
+    try {
+        const data = JSON.parse(document.getElementById('horsesJson').value);
+        if (!Array.isArray(data)) throw new Error('Must be an array');
+        appState.horses = data;
+        saveToFirebase();
+        renderAll();
+        alert('Horses saved!');
+    } catch (e) {
+        alert('Invalid JSON: ' + e.message);
+    }
+}
+
+// Manage People
+function loadPeopleToTextarea() {
+    document.getElementById('peopleList').value = appState.people.join('\n');
+}
+
+function savePeopleList() {
+    const lines = document.getElementById('peopleList').value.split('\n').map(s => s.trim()).filter(Boolean);
+    if (lines.length === 0) { alert('Enter at least one name!'); return; }
+    appState.people = lines;
+    saveToFirebase();
+    renderAll();
+    alert(`${lines.length} people saved!`);
+}
+
+// Results Admin
+function renderResultsAdmin() {
+    const container = document.getElementById('resultsEntryForm');
+    let html = '';
+    for (let i = 1; i <= Math.min(appState.horses.length, 10); i++) {
+        const current = appState.results.find(r => r.position === i);
+        const label = i === 1 ? '🥇 1st' : i === 2 ? '🥈 2nd' : i === 3 ? '🥉 3rd' : `${i}th`;
+        html += `<div class="form-group">
+            <label>${label} Place</label>
+            <select id="result-pos-${i}">
+                <option value="">-- Select Horse --</option>
+                ${appState.horses.sort((a, b) => a.number - b.number).map(h =>
+                    `<option value="${h.number}" ${current && current.horseNumber === h.number ? 'selected' : ''}>${h.number}. ${h.name}</option>`
+                ).join('')}
+            </select>
+        </div>`;
+    }
+    container.innerHTML = html;
+}
+
+function saveResults() {
+    const results = [];
+    for (let i = 1; i <= 10; i++) {
+        const sel = document.getElementById('result-pos-' + i);
+        if (!sel) break;
+        const val = parseInt(sel.value);
+        if (val) results.push({ position: i, horseNumber: val });
+    }
+    appState.results = results;
+    saveToFirebase();
+    renderAll();
+    alert('Results saved!');
+}
+
+// Data export/import
+function exportData() {
+    const data = JSON.stringify(appState, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sweepstake_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.horses) appState.horses = data.horses;
+            if (data.people) appState.people = data.people;
+            if (data.draws) appState.draws = data.draws;
+            if (data.predictions) appState.predictions = data.predictions;
+            if (data.results) appState.results = data.results;
+            if (data.settings) appState.settings = { ...appState.settings, ...data.settings };
+            saveToFirebase();
+            renderAll();
+            document.getElementById('dataMessage').innerHTML = '<p style="color: green;">✅ Data imported successfully!</p>';
+        } catch (err) {
+            document.getElementById('dataMessage').innerHTML = '<p style="color: red;">❌ Invalid JSON file.</p>';
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// Close modals on Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeHorseModal();
+    }
+});
+
+// Init on load
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
