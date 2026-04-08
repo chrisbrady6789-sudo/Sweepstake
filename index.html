@@ -2034,10 +2034,13 @@ function updateCountdown() {
 // ============================================================
 function renderAll() {
     renderHomeStatus();
-    if (currentPage === 'draw') renderDrawPage();
+    // Skip re-rendering pages with dropdowns if user is interacting with a select
+    const activeEl = document.activeElement;
+    const isSelectFocused = activeEl && activeEl.tagName === 'SELECT';
+    if (currentPage === 'draw' && !isSelectFocused) renderDrawPage();
     if (currentPage === 'runners') renderRunnersPage();
     if (currentPage === 'sweepstake') renderSweepstakePage();
-    if (currentPage === 'predictions') renderPredictionsPage();
+    if (currentPage === 'predictions' && !isSelectFocused) renderPredictionsPage();
     if (currentPage === 'raceday') renderRaceDayPage();
 }
 
