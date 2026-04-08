@@ -493,6 +493,33 @@
             opacity: 0.5;
             border-left-color: #ccc;
         }
+        .sweep-card.unlucky-loser {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+            opacity: 0.7;
+        }
+        .sweep-card.non-runner-person {
+            border-left-color: #e67e22;
+            background: #fff8f0;
+        }
+
+        /* Non-runner horse cards */
+        .horse-card.non-runner {
+            opacity: 0.5;
+            position: relative;
+        }
+        .horse-card.non-runner::after {
+            content: 'NON-RUNNER';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-20deg);
+            font-size: 1.8em;
+            font-weight: bold;
+            color: rgba(220, 53, 69, 0.5);
+            letter-spacing: 3px;
+            pointer-events: none;
+        }
 
         /* ============ PREDICTIONS ============ */
         .prediction-form {
@@ -564,6 +591,163 @@
         }
         .prediction-card .pred-medal {
             font-size: 1.1em;
+        }
+
+        /* ============ AI PREDICTIONS ============ */
+        .ai-hero {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #16213e 100%);
+            border-radius: 12px;
+            padding: 30px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+        .ai-hero::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,215,0,0.04) 60px, rgba(255,215,0,0.04) 120px);
+            pointer-events: none;
+        }
+        .ai-hero h2 { color: var(--gold); font-size: 1.8em; margin-bottom: 10px; position: relative; }
+        .ai-hero p { opacity: 0.9; line-height: 1.6; position: relative; }
+        .ai-disclaimer {
+            font-size: 0.8em;
+            color: #999;
+            text-align: center;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .ai-top6 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .ai-pick-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px;
+            border-left: 5px solid var(--gold);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        .ai-pick-card.nap { border-left-color: #e94560; background: linear-gradient(135deg, #fff 0%, #fff5f5 100%); }
+        .ai-pick-card .pick-pos {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 2em;
+            font-weight: 900;
+            color: rgba(0,0,0,0.06);
+        }
+        .ai-pick-card h3 { color: var(--primary); margin-bottom: 4px; }
+        .ai-pick-card .pick-meta { font-size: 0.85em; color: #888; margin-bottom: 8px; }
+        .ai-pick-card .pick-reason { font-size: 0.92em; line-height: 1.55; color: #444; }
+        .ai-pick-tag {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--primary);
+            font-size: 0.75em;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .ai-pick-tag.nap-tag { background: #e94560; color: #fff; }
+        .ai-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .ai-section-header h2 { margin: 0; }
+        .ai-section-header .ai-badge {
+            background: linear-gradient(135deg, #e94560, #c0392b);
+            color: #fff;
+            font-size: 0.7em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .ai-value-picks {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+        .ai-value-card {
+            background: #f0faf5;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #d5f5e3;
+        }
+        .ai-value-card h4 { color: var(--green-dark); margin-bottom: 6px; }
+        .ai-value-card p { font-size: 0.9em; color: #555; line-height: 1.5; }
+        .ai-trends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .ai-trend-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+        .ai-trend-card .trend-stat {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1;
+        }
+        .ai-trend-card .trend-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 6px;
+        }
+        .ai-danger-zone {
+            background: #fff5f5;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 16px;
+        }
+        .ai-danger-zone h4 { color: #c0392b; margin-bottom: 8px; }
+        .ai-danger-zone ul { margin-left: 20px; font-size: 0.9em; line-height: 1.8; color: #555; }
+        .ai-final-verdict {
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+            border: 2px solid var(--gold);
+        }
+        .ai-final-verdict h3 { color: var(--gold); margin-bottom: 12px; font-size: 1.3em; }
+        .ai-final-verdict p { line-height: 1.7; opacity: 0.95; }
+        .ai-final-verdict .verdict-order {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .ai-final-verdict .verdict-chip {
+            background: rgba(255,215,0,0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+        .ai-final-verdict .verdict-chip:first-child {
+            background: var(--gold);
+            color: var(--primary);
         }
 
         /* ============ RESULTS TABLE ============ */
@@ -908,6 +1092,7 @@
     <button onclick="showPage('runners')" id="nav-runners">🐎 Runners</button>
     <button onclick="showPage('sweepstake')" id="nav-sweepstake">📋 Sweepstake</button>
     <button onclick="showPage('predictions')" id="nav-predictions">🔮 Predictions</button>
+    <button onclick="showPage('aiPredictions')" id="nav-aiPredictions">🤖 AI Tips</button>
     <button onclick="showPage('raceday')" id="nav-raceday">🏁 Race Day</button>
     <button onclick="showPage('admin')" id="nav-admin" class="hidden">⚙️ Admin</button>
 </div>
@@ -951,8 +1136,14 @@
                 </ul>
                 <br>
                 <p style="text-align: center; margin-top: 15px;">
-                    <strong style="font-size: 1.2em;">🏆 Prize Pool: Winner takes it all!</strong>
+                    <strong style="font-size: 1.2em;">🏆 Prize Pool: €170 (€5 per person)</strong>
                 </p>
+                <div style="display: flex; justify-content: center; gap: 15px; margin-top: 12px; flex-wrap: wrap;">
+                    <div style="background: linear-gradient(135deg, #ffd700, #f0c800); color: #1a1a2e; padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: center; min-width: 100px;">🥇 1st<br>€90</div>
+                    <div style="background: linear-gradient(135deg, #c0c0c0, #a8a8a8); color: #1a1a2e; padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: center; min-width: 100px;">🥈 2nd<br>€45</div>
+                    <div style="background: linear-gradient(135deg, #cd7f32, #b8690e); color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: center; min-width: 100px;">🥉 3rd<br>€25</div>
+                    <div style="background: linear-gradient(135deg, #e94560, #c23152); color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: center; min-width: 100px;">💥 First Faller<br>€10</div>
+                </div>
             </div>
         </div>
 
@@ -1102,6 +1293,184 @@
         </div>
     </div>
 
+    <!-- ==================== AI PREDICTIONS PAGE ==================== -->
+    <div id="aiPredictionsPage" class="hidden">
+
+        <!-- Hero -->
+        <div class="ai-hero">
+            <h2>🤖 AI Race Prediction</h2>
+            <p>Compiled from expert analysis by Sporting Life, Racing TV, grandnational.fans, and grand-national-guide.co.uk — weighted by historical trends, form, going preference, weight, age profile, jockey bookings, and course experience.</p>
+            <p class="ai-disclaimer">For entertainment only — if AI could predict the Grand National, we'd all be millionaires!</p>
+        </div>
+
+        <!-- Historical Trends -->
+        <div class="card">
+            <div class="ai-section-header">
+                <h2>📊 Key Trends (Last 10 Winners)</h2>
+                <span class="ai-badge">DATA-DRIVEN</span>
+            </div>
+            <p style="color: #666; margin-bottom: 12px;">These are the filters the AI applies before making selections. Horses that tick these boxes rise; those that don't get marked down.</p>
+            <div class="ai-trends-grid">
+                <div class="ai-trend-card">
+                    <div class="trend-stat">9/10</div>
+                    <div class="trend-label">Winners aged <strong>8 or 9</strong></div>
+                </div>
+                <div class="ai-trend-card">
+                    <div class="trend-stat">6/10</div>
+                    <div class="trend-label">Carried <strong>10-12 or less</strong></div>
+                </div>
+                <div class="ai-trend-card">
+                    <div class="trend-stat">8/10</div>
+                    <div class="trend-label">Had <strong>not fallen</strong> that season</div>
+                </div>
+                <div class="ai-trend-card">
+                    <div class="trend-stat">10/10</div>
+                    <div class="trend-label">Had <strong>not unseated</strong> jockey that season</div>
+                </div>
+                <div class="ai-trend-card">
+                    <div class="trend-stat">~20/1</div>
+                    <div class="trend-label">Average <strong>winning odds</strong></div>
+                </div>
+                <div class="ai-trend-card">
+                    <div class="trend-stat">G-S</div>
+                    <div class="trend-label"><strong>Going:</strong> Good to Soft, Good in places</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 6 Prediction -->
+        <div class="card">
+            <div class="ai-section-header">
+                <h2>🏆 AI Predicted Finishing Order</h2>
+                <span class="ai-badge">TOP 6</span>
+            </div>
+            <p style="color: #666; margin-bottom: 6px;">The AI's best assessment of how the race plays out, based on all available data.</p>
+            <div class="ai-top6" id="aiTop6">
+                <!-- 1st -->
+                <div class="ai-pick-card nap">
+                    <div class="pick-pos">1</div>
+                    <span class="ai-pick-tag nap-tag">🔥 AI NAP — TO WIN</span>
+                    <h3>🥇 Iroko</h3>
+                    <div class="pick-meta">#4 · 12/1 · 8yo · 11-1 · Jonjo O'Neill Jr · Greenall & Guerriero</div>
+                    <div class="pick-reason">The only horse given the maximum five-star rating by Sporting Life's David Ord — his outright NAP to win. Perfectly fits the age profile at 8, well-handicapped at 11-1, and his poor Cheltenham run is fully explained by scoping dirty afterwards. Jockey will ride him more prominently this time. Excellent 4th last year when shuffled too far back. A more complete horse now, peaking at exactly the right time for Aintree.</div>
+                </div>
+                <!-- 2nd -->
+                <div class="ai-pick-card">
+                    <div class="pick-pos">2</div>
+                    <span class="ai-pick-tag">STRONG EACH-WAY</span>
+                    <h3>🥈 Johnnywho</h3>
+                    <div class="pick-meta">#9 · 16/1 · 9yo · 10-4 · R P McLernon · Jonjo O'Neill</div>
+                    <div class="pick-reason">Ultima Handicap Chase winner at Cheltenham — the same route Corach Rambler took in 2023 before winning the National. A breathing operation has completely transformed him. Crucially 6lb well-in at the weights because the handicapper can't reassess after his Cheltenham win. At 9 with 10-4, he's a textbook National winner by the trends. Already had a sighter of the fences. Tipped 2nd by Sporting Life.</div>
+                </div>
+                <!-- 3rd -->
+                <div class="ai-pick-card">
+                    <div class="pick-pos">3</div>
+                    <span class="ai-pick-tag">VERSATILE STAYER</span>
+                    <h3>🥉 Gorgeous Tom</h3>
+                    <div class="pick-meta">#14 · 25/1 · 8yo · 10-9 · Sean Flanagan · Henry de Bromhead</div>
+                    <div class="pick-reason">The experts' each-way favourite — Matt Brocklebank calls him the value play. Eye-catching 4th in the Coral Gold Cup after being messed about at the start. Genuine stamina in his pedigree, perfect age at 8, and de Bromhead excels at this meeting. Tipped 3rd by Sporting Life. Sean Flanagan books a strong jockey for a horse who could outrun his odds significantly.</div>
+                </div>
+                <!-- 4th -->
+                <div class="ai-pick-card">
+                    <div class="pick-pos">4</div>
+                    <span class="ai-pick-tag">DEFENDING CHAMP</span>
+                    <h3>I Am Maximus</h3>
+                    <div class="pick-meta">#1 · 7/1 · 10yo · 11-12 · Paul Townend · Willie Mullins</div>
+                    <div class="pick-reason">The 2024 winner and 2025 runner-up — proven beyond doubt at Aintree. Better preparation than last year. But trends say only 4 of the last 10 winners carried 10-13 or more, and he's lumping 11-12 at age 10. Paul Townend chose him over Grangeclare West, which speaks volumes. The one they all have to beat, but the weight may just anchor him out of the top 3.</div>
+                </div>
+                <!-- 5th -->
+                <div class="ai-pick-card">
+                    <div class="pick-pos">5</div>
+                    <span class="ai-pick-tag">LIVE OUTSIDER</span>
+                    <h3>Favori De Champdou</h3>
+                    <div class="pick-meta">#17 · 33/1 · 11yo · 11-1 · TBC · Gordon Elliott</div>
+                    <div class="pick-reason">Gigginstown-owned, Elliott-trained — they know what it takes (Tiger Roll x2). Won the Paddy Power Chase at 66/1 and ran a strong 2nd in the Festival cross-country behind Final Orders. The cross-country route is a proven National springboard. Arrives right at the top of his game. The fall in his form is a minor concern, but at 33/1, the value is there. Tipped 5th by Sporting Life.</div>
+                </div>
+                <!-- 6th -->
+                <div class="ai-pick-card">
+                    <div class="pick-pos">6</div>
+                    <span class="ai-pick-tag">NOVICE THREAT</span>
+                    <h3>Oscar's Brother</h3>
+                    <div class="pick-meta">#7 · 16/1 · 8yo · 10-13 · TBC · Connor King</div>
+                    <div class="pick-reason">A rising star from a tiny yard — Connor King has just two horses in training. On a relentless upward curve with form of 221114. His strong-staying 4th in the Brown Advisory at Cheltenham screams National horse. At 8, he's the perfect age. Noble Yeats proved novices can win the modern National. The fairy-tale factor is real. If he handles the unique fences, he'll be there at the finish.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Each-Way Value Picks -->
+        <div class="card">
+            <div class="ai-section-header">
+                <h2>💰 Each-Way Value Picks</h2>
+                <span class="ai-badge">BIG PRICES</span>
+            </div>
+            <p style="color: #666; margin-bottom: 6px;">Outsiders the AI believes are overpriced by the market — potential place value at big odds.</p>
+            <div class="ai-value-picks">
+                <div class="ai-value-card">
+                    <h4>🌟 Champ Kiely — 80/1</h4>
+                    <p>#29 · 10yo · 11-1 · Willie Mullins<br>Patrick Mullins himself says he "likes this horse's chance" — and the champion amateur knows Aintree inside out. A Grade One winner who has been running on unsuitably soft ground all winter. Better ground at Aintree transforms the picture. Sneaky big each-way at a monster price.</p>
+                </div>
+                <div class="ai-value-card">
+                    <h4>🌟 Stellar Story — 25/1</h4>
+                    <p>#13 · 9yo · 10-11 · Gordon Elliott<br>Brown Advisory runner-up and Albert Bartlett winner — proper Grade 1 form at the top table. Gets a 21lb pull with Grangeclare West on Bobbyjo form. At 9 with 10-11, ticks every trend box. Elliott chasing a record-equalling National winners' tally. "Not discounted" by experts.</p>
+                </div>
+                <div class="ai-value-card">
+                    <h4>🌟 Twig — 66/1</h4>
+                    <p>#27 · 11yo · 10-4 · Ben Pauling<br>Becher Chase winner over the Grand National fences — knows precisely what he's jumping. William Hill offer £500,000 bonus if he follows up. At 11, trends say no, but course experience is priceless. Young jockey Beau Morgan could spring a surprise on the horse who knows every ditch and brook.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="card">
+            <div class="ai-section-header">
+                <h2>⚠️ Trends Against</h2>
+                <span class="ai-badge">CAUTION</span>
+            </div>
+            <p style="color: #666; margin-bottom: 6px;">Fancied horses that fail key trend filters — proceed with caution.</p>
+            <div class="ai-danger-zone">
+                <h4>Horses the market overrates (according to trends):</h4>
+                <ul>
+                    <li><strong>Jagwar (10/1)</strong> — Only 7 years old and has never raced beyond 3 miles. The National is 4m2f. His temperament is volatile. Two huge unknowns.</li>
+                    <li><strong>Nick Rockett (16/1)</strong> — Defending champion but crippled by a 23lb rise to 11-11. Only his 2nd outing of the season. No horse has done that since Aldaniti in 1981.</li>
+                    <li><strong>Haiti Couleurs (14/1)</strong> — Pulled up tamely in Gold Cup. Wants softer ground than the Good-to-Soft forecast. A front-runner in a 34-runner field is asking for trouble.</li>
+                    <li><strong>Captain Cody (16/1)</strong> — Unseated rider this season. 10 of the last 10 National winners had NOT unseated their jockey that campaign.</li>
+                    <li><strong>Grangeclare West (9/1)</strong> — Age 10 and 11-10 are both outside the sweet spot. Paul Townend chose I Am Maximus over him, which tells a story.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- The Race Scenario -->
+        <div class="card">
+            <div class="ai-section-header">
+                <h2>🏇 How the AI Sees the Race Unfolding</h2>
+            </div>
+            <div style="line-height: 1.8; color: #444;">
+                <p><strong>The Start:</strong> A clean break for the 34 runners. Haiti Couleurs and Final Orders vie for the early lead, with Three Card Brag and Spanish Harlem also prominent. The big fancies — Iroko, I Am Maximus, Johnnywho — settle in mid-division, conserving energy for the marathon ahead.</p>
+                <p style="margin-top: 12px;"><strong>First Circuit:</strong> The field navigates Becher's Brook and The Canal Turn. Expect casualties among the novices. Jagwar may find the unique fences problematic — he's never seen anything like them. By Valentine's Brook second time, the 34 runners are whittled to a dozen serious contenders. Haiti Couleurs begins to fade from the front.</p>
+                <p style="margin-top: 12px;"><strong>The Business End:</strong> Turning for home, Iroko moves smoothly into contention under Jonjo O'Neill Jr — travelling like the best horse in the race. I Am Maximus plugs on gamely under top weight but can't quicken. Johnnywho, settled out the back, begins a relentless engine-like run wide, picking off tired rivals. Gorgeous Tom emerges from the pack at 25/1.</p>
+                <p style="margin-top: 12px;"><strong>The Run-In:</strong> Iroko hits the famous Elbow in front and stays on powerfully. Johnnywho closes with every stride but can't quite catch the leader. Gorgeous Tom runs the race of his life for third. I Am Maximus is heroic in fourth, one place short for the second year running. The fairy-tale finishes 5th (Favori De Champdou) and 6th (Oscar's Brother from his two-horse stable).</p>
+            </div>
+        </div>
+
+        <!-- Final Verdict -->
+        <div class="card">
+            <div class="ai-final-verdict">
+                <h3>🎯 AI Final Verdict</h3>
+                <p>The data points to <strong>Iroko</strong> — the only five-star horse in the field. He's 8, carries 11-1, has course experience from last year's 4th, and his Cheltenham flop is fully explained. Jockey Jonjo O'Neill Jr will ride him more aggressively this time. <strong>Johnnywho</strong> is the most interesting runner at the weights — 6lb well-in with an Ultima win under his belt. <strong>Gorgeous Tom</strong> at 25/1 represents the best each-way value in the race.</p>
+                <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">The AI would place a hypothetical treble: <strong>Iroko to win</strong>, <strong>Johnnywho each-way</strong>, <strong>Gorgeous Tom each-way</strong>. Dark horse: Champ Kiely at 80/1.</p>
+                <div class="verdict-order">
+                    <span class="verdict-chip">1. Iroko 🏆</span>
+                    <span class="verdict-chip">2. Johnnywho</span>
+                    <span class="verdict-chip">3. Gorgeous Tom</span>
+                    <span class="verdict-chip">4. I Am Maximus</span>
+                    <span class="verdict-chip">5. Favori De Champdou</span>
+                    <span class="verdict-chip">6. Oscar's Brother</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <!-- ==================== RACE DAY PAGE ==================== -->
     <div id="racedayPage" class="hidden">
         <div class="card">
@@ -1142,6 +1511,7 @@
                 <div class="tab-btn active" onclick="showAdminTab('draw-admin')">Draw Control</div>
                 <div class="tab-btn" onclick="showAdminTab('horses-admin')">Manage Horses</div>
                 <div class="tab-btn" onclick="showAdminTab('people-admin')">Manage People</div>
+                <div class="tab-btn" onclick="showAdminTab('nonrunner-admin')">Non-Runners</div>
                 <div class="tab-btn" onclick="showAdminTab('results-admin')">Enter Results</div>
                 <div class="tab-btn" onclick="showAdminTab('data-admin')">Data</div>
             </div>
@@ -1190,6 +1560,47 @@
                 <button class="btn" onclick="loadPeopleToTextarea()" style="margin-top: 10px; margin-left: 10px;">Load Current</button>
             </div>
 
+            <!-- Non-Runners & Reserves -->
+            <div id="adminTab-nonrunner-admin" class="hidden">
+                <h3>🚫 Non-Runners & Reserves</h3>
+
+                <!-- Reserve Horses -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #f0f7ff; border-radius: 8px; border: 1px solid #d0e3f7;">
+                    <h4 style="margin-bottom: 10px;">🐎 Reserve Horses</h4>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Edit reserve horse details as JSON. These are available to replace non-runners.</p>
+                    <textarea id="reservesJson" style="width:100%; min-height: 150px; font-family: monospace; font-size: 0.85em;"></textarea>
+                    <button class="btn btn-gold btn-sm" onclick="saveReservesFromJson()" style="margin-top: 8px;">Save Reserves</button>
+                    <button class="btn btn-sm" onclick="loadReservesToTextarea()" style="margin-top: 8px; margin-left: 8px;">Load Current</button>
+                </div>
+
+                <!-- Mark Non-Runners -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #fff5f5; border-radius: 8px; border: 1px solid #f5c6cb;">
+                    <h4 style="margin-bottom: 10px;">🚫 Mark Non-Runners</h4>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Select a horse to mark as a non-runner (withdrawn before the race).</p>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <select id="nonRunnerSelect" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; min-width: 250px;"></select>
+                        <button class="btn btn-accent btn-sm" onclick="markNonRunner()">Mark Non-Runner</button>
+                    </div>
+                    <div id="nonRunnerList" style="margin-top: 15px;"></div>
+                </div>
+
+                <!-- Affected People -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #fff8e1; border-radius: 8px; border: 1px solid #ffe082;">
+                    <h4 style="margin-bottom: 10px;">👥 Affected Participants</h4>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">People whose drawn horse is a non-runner. Assign a reserve or mark as unlucky loser.</p>
+                    <div id="affectedPeopleList"></div>
+                    <div style="margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-gold btn-sm" onclick="randomizeReserves()">🎲 Randomly Assign Available Reserves</button>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div style="padding: 15px; background: #e8f5e9; border-radius: 8px; border: 1px solid #c8e6c9;">
+                    <h4 style="margin-bottom: 10px;">📋 Summary</h4>
+                    <div id="nonRunnerSummary"></div>
+                </div>
+            </div>
+
             <!-- Enter Results -->
             <div id="adminTab-results-admin" class="hidden">
                 <h3>🏁 Enter Race Results</h3>
@@ -1205,6 +1616,20 @@
                 <button class="btn" onclick="document.getElementById('importFile').click()" style="margin-left: 10px;">Import Data</button>
                 <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
                 <div id="dataMessage" style="margin-top: 15px;"></div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #fff5f5; border-radius: 8px; border: 1px solid #f5c6cb;">
+                    <h4 style="margin-bottom: 8px;">🔄 Reset Horses & Reserves to Defaults</h4>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Overwrites saved horse/reserve data in Firebase and localStorage with the latest DEFAULT_HORSES and DEFAULT_RESERVES from the code. Draws, predictions, results, and people are kept.</p>
+                    <button class="btn btn-accent" onclick="resetToDefaults()">Reset Horses & Reserves</button>
+                    <div id="resetDefaultsMsg" style="margin-top: 10px;"></div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #f5f0ff; border-radius: 8px; border: 1px solid #d6c6f5;">
+                    <h4 style="margin-bottom: 8px;">🗑️ Reset All User Predictions</h4>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Clears all submitted predictions from every user. This cannot be undone.</p>
+                    <button class="btn btn-accent" onclick="resetAllPredictions()">Reset Predictions</button>
+                    <div id="resetPredictionsMsg" style="margin-top: 10px;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -1230,66 +1655,86 @@ let firebaseReady = false;
 
 // ============================================================
 //  REAL 2026 GRAND NATIONAL DATA
-//  Final declarations: Wed 8th April 2026 — update if needed
-//  Odds from grandnational.org.uk / Racing Post (7th April)
-//  Silk images from Racing Post
+//  Final declarations: Wed 8th April 2026
+//  Odds from grandnational.org.uk (8th April 11am)
+//  Silk images downloaded locally from grandnational.org.uk
+// ============================================================
+//  REAL 2026 GRAND NATIONAL DATA
+//  Final declarations: Wed 8th April 2026
+//  Odds & form from grandnational.org.uk + Sporting Life + Racing TV
+//  Expert ratings from David Ord (Sporting Life pinsticker's guide)
+//  Silk images downloaded locally from grandnational.org.uk
+//  Going: Good to Soft, Good in places | Race: 4pm Sat 11 April
 // ============================================================
 const DEFAULT_HORSES = [
-    { number: 1, name: "I Am Maximus", jockey: "Paul Townend", trainer: "Willie Mullins", age: 10, weight: "11-12", odds: "15/2", oddsDecimal: 8.5, form: "82-925", color: "#2d8a4e", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/8/8/20887.png", aiWriteup: "The 2024 Grand National winner returns as the top-weighted favourite, and with good reason. I Am Maximus followed up his Aintree triumph with an impressive second place carrying top weight in 2025, beaten only two and a half lengths by Nick Rockett. A solid second in December's Savills Chase over Christmas suggests his best days aren't behind him. Willie Mullins' stable jockey Paul Townend stays loyal to this horse, and the champion trainer has perfected the art of preparing National horses. The only concern is the top weight of 11-12, but he's proven he can handle it. The one they all have to beat.", chance: 75 },
-    { number: 2, name: "Grangeclare West", jockey: "TBC", trainer: "Willie Mullins", age: 10, weight: "11-10", odds: "10/1", oddsDecimal: 11, form: "5-8481", color: "#2ecc71", colorSecondary: "#f1c40f", silkImage: "https://images.racingpost.com/png_silks/5/0/1/16105.png", aiWriteup: "Third in last year's Grand National and comes here in flying form after winning the Bobbyjo Chase at Fairyhouse in February by five and a half lengths. That victory confirmed his stamina credentials and saw his odds slashed from 25/1 to 10/1. Another Mullins-trained runner who clearly loves the extreme distance. Handles any ground and has the experience of completing the course last year. The 11-10 weight means he's well treated compared to the topweight. Major contender who could go one better than 2025.", chance: 68 },
-    { number: 3, name: "Iroko", jockey: "Jonjo O'Neill Jr", trainer: "Oliver Greenall & Josh Guerriero", age: 8, weight: "11-1", odds: "14/1", oddsDecimal: 15, form: "424-21", color: "#2d8a4e", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/8/8/20887.png", aiWriteup: "Came home a strong fourth in last year's Grand National after staying on powerfully through the closing stages — he was the best British-trained horse in the race. Won the Martin Pipe at the 2023 Cheltenham Festival showing he can handle big-field handicaps. Had wind surgery over the summer but disappointed when finishing 10th in the Ultima at Cheltenham last month. The Grand National fences may suit him better than Cheltenham, and at 8 years old he's still improving. Wears the same green and yellow silks as I Am Maximus (same owner). One for each-way punters.", chance: 55 },
-    { number: 4, name: "Jagwar", jockey: "Sam Twiston-Davies", trainer: "Oliver Greenall & Josh Guerriero", age: 7, weight: "10-10", odds: "14/1", oddsDecimal: 15, form: "311-32", color: "#2d8a4e", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/8/8/20887.png", aiWriteup: "Among the leading fancies thanks to superb Cheltenham form — won the TrustATrader Plate at the 2025 Festival and finished a close second in this year's Ultima. At just 7, he's the youngest in the field, which is both exciting and a risk over these demanding fences. Has never raced beyond 3 miles, so the National's 4m2f trip is a genuine unknown. The Greenall yard are having a fine season and Sam Twiston-Davies is a smart booking. If he stays, he wins — that's the question.", chance: 58 },
-    { number: 5, name: "Panic Attack", jockey: "Harry Skelton", trainer: "Dan Skelton", age: 10, weight: "10-5", odds: "16/1", oddsDecimal: 17, form: "2-1113", color: "#e74c3c", colorSecondary: "#2c3e50", silkImage: "https://images.racingpost.com/png_silks/5/7/3/209375.png", aiWriteup: "Having an exceptional season — won both the Paddy Power Gold Cup and Coral Gold Cup at the end of 2025, showing she can handle big-field handicaps with aplomb. A distant third in the Mares' Chase at Cheltenham last time was a slight concern, but that was over an inadequate 2m4f. The step up to the National trip should suit this tough, consistent mare. Dan Skelton has his stable jockey brother Harry in the saddle. A mare hasn't won the National since 1951, but Panic Attack might be the one to break that drought.", chance: 52 },
-    { number: 6, name: "Johnnywho", jockey: "Jonjo O'Neill Jr", trainer: "Jonjo O'Neill", age: 9, weight: "10-4", odds: "16/1", oddsDecimal: 17, form: "5-5351", color: "#2d8a4e", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/8/8/20887.png", aiWriteup: "Catapulted himself into Grand National contention by winning the Ultima at Cheltenham last month — a race that has been a strong pointer to National success in recent years, with Corach Rambler having taken the same route to Aintree glory. Only sneaked into the field after late withdrawals, but that could be a blessing in disguise as he'll carry less weight. The O'Neill team know what's needed for the National, and the Ultima victory suggests stamina won't be an issue. A lively outsider at 16/1.", chance: 50 },
-    { number: 7, name: "Nick Rockett", jockey: "Patrick Mullins", trainer: "Willie Mullins", age: 9, weight: "11-11", odds: "16/1", oddsDecimal: 17, form: "4111-3", color: "#c0392b", colorSecondary: "#f1c40f", silkImage: "https://images.racingpost.com/png_silks/b/4/4/314744b.png", aiWriteup: "The defending champion! Nick Rockett powered through to win last year's National under Patrick Mullins, staying on strongly to hold off I Am Maximus. He carried just 10-2 last year but faces 11-11 this time — a massive 23lb rise. Finally returned to action at Down Royal in mid-March, finishing third in a four-runner field. That comeback run should have blown away the cobwebs, though concerns remain about ring-rustiness after such a long absence. History shows that back-to-back National winners are extremely rare, but with Mullins and Mullins in charge, never say never.", chance: 48 },
-    { number: 8, name: "Oscar's Brother", jockey: "TBC", trainer: "Connor King", age: 8, weight: "10-13", odds: "16/1", oddsDecimal: 17, form: "-22114", color: "#2d8a4e", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/8/8/20887.png", aiWriteup: "Already has three wins to his name this season over in Ireland, showing consistent improvement. His UK debut came at March's Cheltenham Festival with a respectable fourth place in the Brown Advisory Chase against high-class opposition. At 8, he's young enough to be progressing and his form figures reading -22114 show a horse on the upgrade. Trained by the smaller Connor King stable rather than one of the big battalions, which adds a feel-good element. The 10-13 weight looks reasonable for his ability level.", chance: 50 },
-    { number: 9, name: "Haiti Couleurs", jockey: "Sean Bowen", trainer: "Rebecca Curtis", age: 9, weight: "11-10", odds: "18/1", oddsDecimal: 19, form: "-1P11P", color: "#3498db", colorSecondary: "#e74c3c", silkImage: "https://images.racingpost.com/png_silks/6/3/9/363936.png", aiWriteup: "A dual National winner — just not this one! Haiti Couleurs won both the Irish and Welsh Grand Nationals in 2025, plus a Cheltenham Festival victory, marking him out as one of the best staying chasers around. However, hopes took a dent when pulled up in the Gold Cup at Cheltenham, and the form figure P is never what you want to see going into the National. Those two pulled-ups (P) in his form are a concern over 30 fences. Ante-post favourite a few months ago but has drifted to 18/1. Rebecca Curtis' stable star who needs to bounce back.", chance: 45 },
-    { number: 10, name: "Monty's Star", jockey: "TBC", trainer: "Henry de Bromhead", age: 9, weight: "11-3", odds: "20/1", oddsDecimal: 21, form: "4-3056", color: "#8e44ad", colorSecondary: "#f39c12", silkImage: "https://images.racingpost.com/png_silks/e/7/2/160627e.png", aiWriteup: "Heads to Aintree on a nine-race losing run, which doesn't inspire immediate confidence. However, this remains a decent Grade 1 horse who has been competing at the highest level. The saving grace is his weight — he carries less than several of his rivals despite a fairly high rating. The de Bromhead stable, now without retired jockey Rachael Blackmore, will be looking for a new big-race star. The form figures aren't pretty but he's better than they suggest. Could outrun his odds if things fall right.", chance: 38 },
-    { number: 11, name: "Captain Cody", jockey: "Harry Cobden", trainer: "Willie Mullins", age: 8, weight: "10-10", odds: "20/1", oddsDecimal: 21, form: "1-37F5", color: "#16a085", colorSecondary: "#ecf0f1", silkImage: "https://images.racingpost.com/png_silks/b/4/2/325324b.png", aiWriteup: "Won last April's Scottish National at Ayr with Harry Cobden on board, catapulting himself into Grand National contention. That victory over the marathon trip proved he stays strongly. The concern is the F in his form (a fall) and a couple of moderate recent runs. Harry Cobden is a top-class rider who will give him every chance. Mullins doesn't run horses in the Grand National unless he thinks they have legitimate chances. At 8 years old, there's scope for further improvement. Interesting at 20/1.", chance: 40 },
-    { number: 12, name: "Final Orders", jockey: "TBC", trainer: "Gavin Cromwell", age: 10, weight: "10-5", odds: "25/1", oddsDecimal: 26, form: "P63151", color: "#d35400", colorSecondary: "#fff", silkImage: "https://images.racingpost.com/png_silks/d/0/5/284250d.png", aiWriteup: "Won the Cross Country Chase at Cheltenham, following in the footsteps of Grand National legends like Tiger Roll and Delta Work who took the same route to Aintree success. The unique skills needed for cross-country racing — adaptability, jumping accuracy, and tactical awareness — translate beautifully to the National fences. Shortened dramatically from 100/1 to 25/1 after that Cheltenham win. Gavin Cromwell knows how to prepare horses for big days. A promising outsider with genuine credentials.", chance: 35 },
-    { number: 13, name: "Stellar Story", jockey: "TBC", trainer: "Gordon Elliott", age: 9, weight: "10-11", odds: "25/1", oddsDecimal: 26, form: "2-3383", color: "#800020", colorSecondary: "#fff", silkImage: "https://images.racingpost.com/png_silks/v/3/2/113523v.png", aiWriteup: "Most recent outing saw him beaten 14½ lengths by Grangeclare West in the Bobbyjo Chase. On the face of it, that's a negative, but he'll carry far less weight at Aintree — a 13lb swing in the weights changes the picture significantly. Trained by the mighty Gordon Elliott who has a superb record in the National with Tiger Roll's back-to-back wins. Consistent form figures suggest he always runs his race. Wears the maroon and white silks shared with stablemates Favori De Champdou and Quai De Bourbon.", chance: 33 },
-    { number: 14, name: "Jordans", jockey: "TBC", trainer: "Joseph Patrick O'Brien", age: 7, weight: "10-8", odds: "28/1", oddsDecimal: 29, form: "2-85P0", color: "#2c3e50", colorSecondary: "#e74c3c", silkImage: "https://images.racingpost.com/png_silks/e/0/2/349420e.png", aiWriteup: "Second in the Mildmay Chase at Aintree last year, proving he handles the unique demands of the course, even if the Mildmay fences are smaller than the National fences. This season's results have been disappointing — a pulled up and a finish outside the first nine aren't confidence-inspiring. At just 7, he matches Jagwar as the youngest in the field. Joseph O'Brien is a genius trainer on the flat and increasingly competent over jumps. Needs to bounce back to his Aintree form of 2025.", chance: 28 },
-    { number: 15, name: "Gerri Colombe", jockey: "TBC", trainer: "Gordon Elliott", age: 10, weight: "10-3", odds: "33/1", oddsDecimal: 34, form: "1/3-P3", color: "#1a5276", colorSecondary: "#f1c40f", silkImage: "https://images.racingpost.com/png_silks/d/6/6/232866d.png", aiWriteup: "A classy chaser whose form figures include a third behind Nick Rockett at Down Royal in mid-March. Shortened from 100/1 to 33/1 after winning at Fairyhouse, suggesting the market has woken up to his chance. The P in his form is a worry — you need to get round safely over 30 National fences — but when he's on song, he has the ability to compete at this level. Elliott's second string but not to be discounted. Light weight of 10-3 is a big advantage.", chance: 30 },
-    { number: 16, name: "Gorgeous Tom", jockey: "TBC", trainer: "Henry de Bromhead", age: 8, weight: "10-9", odds: "33/1", oddsDecimal: 34, form: "4-4245", color: "#154360", colorSecondary: "#48c9b0", silkImage: "https://images.racingpost.com/png_silks/b/4/3/312334b.png", aiWriteup: "Limited experience over longer trips, but a fourth place in November's Coral Gold Cup at Newbury suggests he won't be embarrassed on his Grand National debut. De Bromhead has lost stable jockey Rachael Blackmore to retirement but still knows how to prepare horses for the biggest days. At 8, he's young enough to be learning and old enough to cope. The 33/1 price offers each-way value if he takes to the unique Aintree fences. Needs to prove his stamina over the marathon trip.", chance: 28 },
-    { number: 17, name: "Favori De Champdou", jockey: "TBC", trainer: "Gordon Elliott", age: 11, weight: "10-2", odds: "40/1", oddsDecimal: 41, form: "-05F11", color: "#800020", colorSecondary: "#fff", silkImage: "https://images.racingpost.com/png_silks/v/3/2/113523v.png", aiWriteup: "An 11-year-old veteran who showed he retains plenty of ability with back-to-back wins in his most recent outings. The F (fall) earlier in his form is a concern at his age — you want a clean jumper in the Grand National. Gordon Elliott has saddled multiple National winners and won't have this horse here without hope. Wears the same maroon and white as Stellar Story. At 40/1, he's a proper outsider but has the stamina and experience to get round. Veteran's chance in a race that rewards experience.", chance: 22 },
-    { number: 18, name: "Perceval Legallois", jockey: "TBC", trainer: "Gavin Cromwell", age: 9, weight: "10-1", odds: "40/1", oddsDecimal: 41, form: "11F-P4", color: "#2d8a4e", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/8/8/20887.png", aiWriteup: "French-bred chaser with some eye-catching early career wins but a mixed recent profile. The form figures show two wins, a fall, a pulled up, and a fourth — classic Jekyll-and-Hyde stuff. It's worth noting that four of the last five French-bred winners of the National came in recent years (Mon Mome, Neptune Collonges, Pineau De Re, I Am Maximus), so the breeding isn't against him. Gavin Cromwell also has Final Orders, who may be the preferred runner. Needs it all to click on the day.", chance: 20 },
-    { number: 19, name: "Quai De Bourbon", jockey: "TBC", trainer: "Willie Mullins", age: 7, weight: "10-0", odds: "40/1", oddsDecimal: 41, form: "UB3-PP", color: "#800020", colorSecondary: "#fff", silkImage: "https://images.racingpost.com/png_silks/v/3/2/113523v.png", aiWriteup: "Two consecutive pulled-ups (PP) in his most recent outings is deeply concerning heading into the world's toughest steeplechase. At just 7 and with UB (unseated and brought down) also in his form, this is a horse with serious question marks over his jumping. On the plus side, the Mullins team wouldn't run him if they didn't think there was untapped potential, and the light weight of 10-0 means he's well handicapped if he can jump round safely. A leap of faith at 40/1.", chance: 15 },
-    { number: 20, name: "Banbridge", jockey: "TBC", trainer: "Joseph Patrick O'Brien", age: 10, weight: "10-1", odds: "50/1", oddsDecimal: 51, form: "17-442", color: "#2980b9", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/b/1/2/58021b.png", aiWriteup: "A former Grade 1 winner over hurdles who moved to fences with mixed results. His form over the big obstacles has been steady rather than spectacular, but the quality is there from his hurdling days. Joseph O'Brien also runs Jordans and may split his attention. At 10, he's at a good age for the National and the form figures of 17-442 show consistency if not brilliance. The 50/1 price reflects uncertainty over whether he'll handle the unique test, but stranger things have happened.", chance: 18 },
-    { number: 21, name: "Lecky Watson", jockey: "TBC", trainer: "Willie Mullins", age: 8, weight: "10-0", odds: "50/1", oddsDecimal: 51, form: "1-F77P", color: "#e67e22", colorSecondary: "#ecf0f1", silkImage: "https://images.racingpost.com/png_silks/f/3/8/143383f.png", aiWriteup: "A mixed bag of form — a win followed by a fall, two sevenths, and a pull-up doesn't scream 'Grand National winner'. But the Mullins name demands respect, and the trainer has entered this horse for a reason. At just 8, there's room for improvement, and the light weight is a definite plus. The fall in his form is the main worry over the daunting Aintree fences. At 50/1, this is one for the dreamers, but with Mullins' record in the race, who knows?", chance: 15 },
-    { number: 22, name: "Spillane's Tower", jockey: "TBC", trainer: "James Joseph Mangan", age: 8, weight: "10-0", odds: "50/1", oddsDecimal: 51, form: "5-2931", color: "#2d8a4e", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/8/8/20887.png", aiWriteup: "Trained by the small but capable Mangan stable, Spillane's Tower comes here with quietly progressive form. A recent win shows he's in good heart, and the form sequence of 5-2931 suggests a horse who is figuring things out. Wears the same green and yellow silks as I Am Maximus, Iroko and Jagwar (same JP McManus ownership). The light weight of 10-0 is a big advantage over 4 miles 2 furlongs. A small-yard dreamer at 50/1 — every sweepstake needs one of these!", chance: 16 },
-    { number: 23, name: "Spanish Harlem", jockey: "TBC", trainer: "Willie Mullins", age: 8, weight: "9-13", odds: "50/1", oddsDecimal: 51, form: "4-11PU", color: "#1a5276", colorSecondary: "#3498db", silkImage: "https://images.racingpost.com/png_silks/b/1/2/265021b.png", aiWriteup: "Back-to-back wins earlier in his career had connections dreaming, but a pulled up (PU) last time is a red flag heading to Aintree. Willie Mullins has a remarkable number of entries in this race, suggesting the champion trainer is casting his net wide. At 8, Spanish Harlem has youth on his side and the light weight of 9-13 is attractive. But the lack of recent positive form makes it hard to fancy him at any price. One for Mullins fans only.", chance: 14 },
-    { number: 24, name: "Three Card Brag", jockey: "TBC", trainer: "Gordon Elliott", age: 9, weight: "9-12", odds: "66/1", oddsDecimal: 67, form: "0-8212", color: "#d35400", colorSecondary: "#2c3e50", silkImage: "https://images.racingpost.com/png_silks/e/5/6/283265e.png", aiWriteup: "Named after a card game — fitting for a race that's often described as the biggest gamble in horse racing! Recent form of two wins and a second suggests this horse is in decent nick, even if the 0 and 8 earlier in the sequence show he's not always reliable. Gordon Elliott trains plenty of Grand National runners and knows the preparation required. At 9, he's a good age, and the 9-12 weight means every chance at the handicap. A proper 66/1 shot who could play his best hand on the biggest stage.", chance: 14 },
-    { number: 25, name: "Mr Vango", jockey: "TBC", trainer: "Mrs Sara Bradstock", age: 10, weight: "9-12", odds: "80/1", oddsDecimal: 81, form: "111-2P", color: "#f39c12", colorSecondary: "#2c3e50", silkImage: "https://images.racingpost.com/png_silks/3/1/5/247513.png", aiWriteup: "A hat-trick of wins (111) mid-career was exciting, but a second place and a pull-up since suggest the form has levelled off. Sara Bradstock famously trained Coneygree to win the Cheltenham Gold Cup, so she knows how to prepare horses for the biggest races. The 80/1 price says the market doesn't fancy him, but the Grand National is racing's great equaliser. The light weight of 9-12 and the soft ground he handles could make him a surprise package.", chance: 10 },
-    { number: 26, name: "Twig", jockey: "TBC", trainer: "Ben Pauling", age: 11, weight: "9-11", odds: "66/1", oddsDecimal: 67, form: "770-11", color: "#196f3d", colorSecondary: "#fad7a0", silkImage: "https://images.racingpost.com/png_silks/b/3/2/216123b.png", aiWriteup: "Only sneaked into the field after late withdrawals, but arrives in cracking form with back-to-back wins (11) in his last two starts. At 11, he's one of the oldest in the field, but the veteran horses often run well in the National thanks to their experience over fences. The 770 earlier in his form is a concern — but that was a different horse to the one who's been winning recently. Ben Pauling's team will have him fit and ready. Could be a live 66/1 outsider.", chance: 15 },
-    { number: 27, name: "Answer To Kayf", jockey: "TBC", trainer: "Terence O'Brien", age: 10, weight: "9-11", odds: "66/1", oddsDecimal: 67, form: "10-614", color: "#515a5a", colorSecondary: "#e74c3c", silkImage: "https://images.racingpost.com/png_silks/b/7/4/338247b.png", aiWriteup: "From the small Terence O'Brien stable in Ireland — exactly the kind of fairy-tale story the Grand National loves. The form figures of 10-614 show a versatile performer who has won and placed at various levels. At 10, he's a good age for the race. The problem is he's up against horses from much bigger and better-resourced stables. But the National has a long history of small trainers producing shock winners. At 66/1, worth a sweep ticket for sure.", chance: 13 },
-    { number: 28, name: "High Class Hero", jockey: "TBC", trainer: "Willie Mullins", age: 9, weight: "9-10", odds: "80/1", oddsDecimal: 81, form: "123-2P", color: "#e74c3c", colorSecondary: "#ffd700", silkImage: "https://images.racingpost.com/png_silks/7/5/2/364257.png", aiWriteup: "The name promises more than recent form has delivered — a pull-up (P) last time out isn't ideal preparation for the National. But look deeper and there's a first, second, third, and another second in his form figures, showing genuine class. The Mullins yard at 80/1 is always worth a second look. At 9, he's a perfect age for the race. This horse may have been laid out specifically for this target, with the pull-up being part of the plan rather than cause for alarm. Interesting Mullins outsider.", chance: 12 },
-    { number: 29, name: "Champ Kiely", jockey: "TBC", trainer: "Willie Mullins", age: 10, weight: "9-10", odds: "80/1", oddsDecimal: 81, form: "-12S57", color: "#7d3c98", colorSecondary: "#aed6f1", silkImage: "https://images.racingpost.com/png_silks/b/5/3/122035b.png", aiWriteup: "Yet another Mullins entry! The champion trainer really does dominate the Grand National entries these days. Champ Kiely's form includes a win and a second place, but the S (slipped up) and recent 5th and 7th suggest he's not at the top of his game. At 80/1, the market has made its assessment clear. Still, with the lightest weight in the Mullins battalion, he could surprise if everything goes smoothly. One for the Mullins faithful.", chance: 10 },
-    { number: 30, name: "Pied Piper", jockey: "TBC", trainer: "Gordon Elliott", age: 8, weight: "9-9", odds: "100/1", oddsDecimal: 101, form: "32569F", color: "#b7950b", colorSecondary: "#1a5276", silkImage: "https://images.racingpost.com/png_silks/b/3/6/341863b.png", aiWriteup: "The F (fall) last time out is the elephant in the room for a horse heading to the Grand National, where 30 fences await over four and a quarter miles. Formerly a talented hurdler, Pied Piper has found the transition to fences tricky. Gordon Elliott's name alongside any Grand National runner demands respect, but the 100/1 price tells you where the experts think he stands. At just 8, he's young enough to improve, but the National might come too soon. One for the brave.", chance: 8 },
-    { number: 31, name: "The Real Whacker", jockey: "TBC", trainer: "Patrick Neville", age: 10, weight: "9-8", odds: "100/1", oddsDecimal: 101, form: "54-256", color: "#a93226", colorSecondary: "#aed6f1", silkImage: "https://images.racingpost.com/png_silks/b/4/6/336964b.png", aiWriteup: "From a tiny Patrick Neville yard — the ultimate small-trainer dreamer. The Real Whacker has been a likeable horse throughout his career without ever quite scaling the heights his talent suggested. Form of 54-256 shows he's thereabouts without winning. At 100/1, the market has written him off, but the Grand National adores this type of story. If he gets round safely, any placing would be a fairy tale. The light weight of 9-8 gives him every chance of lasting home.", chance: 8 },
-    { number: 32, name: "Hyland", jockey: "TBC", trainer: "Nicky Henderson", age: 9, weight: "9-7", odds: "100/1", oddsDecimal: 101, form: "2P-974", color: "#bdc3c7", colorSecondary: "#2c3e50", silkImage: "https://images.racingpost.com/png_silks/2/4/4/178442.png", aiWriteup: "One of just three grey horses in the 2026 Grand National — and grey horses always capture the public's imagination! The Nicky Henderson-trained runner has form that reads 2P-974, which isn't sparkling. The pull-up and finishes outside the first four suggest he's limited at this level. But Henderson is a master trainer who wouldn't run a horse without hope. The grey factor alone will see him attract plenty of sweepstake support. At 100/1, he's here for the experience.", chance: 7 },
-    { number: 33, name: "Firefox", jockey: "TBC", trainer: "Gordon Elliott", age: 8, weight: "9-7", odds: "100/1", oddsDecimal: 101, form: "62-124", color: "#e67e22", colorSecondary: "#1a1a2e", silkImage: "https://images.racingpost.com/png_silks/c/1/0/301101c.png", aiWriteup: "A former Irish point-to-point winner who has graduated to the National stage. The form figures of 62-124 actually read reasonably well — two wins and a second is solid at this level. Gordon Elliott's fifth runner in the race, showing the level of domination the big Irish stables have. At 8, Firefox is young and could be one for the future rather than this year. The 100/1 price suggests the market thinks so too. Needs luck but has more ability than the odds imply.", chance: 9 },
-    { number: 34, name: "Imperial Saint", jockey: "TBC", trainer: "Philip Hobbs & Johnson White", age: 8, weight: "9-6", odds: "100/1", oddsDecimal: 101, form: "42-561", color: "#16a085", colorSecondary: "#f39c12", silkImage: "https://images.racingpost.com/png_silks/5/6/8/337865.png", aiWriteup: "Carries the lightest weight in the field at 9-6, which is a big advantage over the marathon Grand National trip. Philip Hobbs knows how to prepare chasers and the form of 42-561 — including a recent win — is tidy enough. At just 8, he's one of the younger competitors and may be one for the future. The 100/1 price suggests this is an educational run as much as anything. But with a featherweight and a recent victory, don't be shocked if he pops up in the placings at huge odds.", chance: 9 }
+    { number: 1, name: "I Am Maximus", jockey: "Paul Townend", trainer: "Willie Mullins", age: 10, weight: "11-12", odds: "7/1", oddsDecimal: 8, form: "P82-925", color: "#1fb25a", colorSecondary: "#ffb700", silkImage: "silks/I_AM_MAXIMUS.png", aiWriteup: "The 2024 Grand National winner and 2025 runner-up returns as the top-weighted favourite \u2014 and heads here in much better form than 12 months ago after a blip-free preparation, skipping the Gold Cup to focus entirely on Aintree. Paul Townend reportedly had a genuine headache choosing between this horse and Grangeclare West, which tells you how highly GCW is regarded \u2014 but I Am Maximus got the nod. Only 1lb higher than last year. Trends say only four horses have carried more than 10-13 to victory in the last decade \u2014 he\u2019s one of them. The one they all have to beat. Expert Rating: \u2b50\u2b50\u2b50\u2b50", chance: 78 },
+    { number: 2, name: "Grangeclare West", jockey: "TBC", trainer: "Willie Mullins", age: 10, weight: "11-10", odds: "9/1", oddsDecimal: 10, form: "35-8481", color: "#bc0a1f", colorSecondary: "#01387b", silkImage: "silks/GRANGECLARE_WEST.png", aiWriteup: "Third last year when some felt he might even have won but for a blunder at the final fence. Has had a fantastic preparation winning the Bobbyjo Chase \u2014 the traditional Irish Grand National trial \u2014 with a bit to spare, despite another late error. Paul Townend agonised over whether to ride him or I Am Maximus. At 10 with 11-10, he\u2019s well treated compared to the topweight. A strong traveller who clearly loves the extreme distance. Major contender who could go one better. Expert Rating: \u2b50\u2b50\u2b50", chance: 68 },
+    { number: 3, name: "Jagwar", jockey: "TBC", trainer: "Oliver Greenall & Josh Guerriero", age: 7, weight: "10-10", odds: "10/1", oddsDecimal: 11, form: "311-322", color: "#1fb25a", colorSecondary: "#ffb700", silkImage: "silks/JAGWAR.png", aiWriteup: "One of the most talented horses in the field \u2014 a strong traveller with a devastating finishing kick. His staying-on second in the Ultima at Cheltenham needs marking up, as he might have won but for a blunder early on. He\u2019s 5lb well-in at the weights and proven in top handicaps. Known to have a feisty temperament (took a kick at journalists on a yard visit!). The 4m2f National trip is uncharted territory \u2014 he\u2019s never raced beyond 3 miles. If he jumps the unique fences cleanly and stays the distance, he wins. Two big ifs. Expert Rating: \u2b50\u2b50\u2b50\u2b50", chance: 62 },
+    { number: 4, name: "Iroko", jockey: "Jonjo O'Neill Jr", trainer: "Oliver Greenall & Josh Guerriero", age: 8, weight: "11-1", odds: "12/1", oddsDecimal: 13, form: "424-210", color: "#1fb25a", colorSecondary: "#ffb700", silkImage: "silks/IROKO.png", aiWriteup: "THE EXPERT\u2019S NAP \u2014 the ONLY horse given the maximum five-star rating by Sporting Life\u2019s David Ord. Came home a strong fourth last year when shuffled too far back, and is a more accomplished horse now \u2014 travelling better in his races than ever before. His first two runs this season were excellent before a poor showing at Cheltenham, but crucially he scoped dirty after that run, fully explaining the performance. At 8 with 11-1, he perfectly fits the profile (9 of last 10 winners aged 8 or 9). Jockey Jonjo O\u2019Neill Jr will sit him handier this time. Sporting Life\u2019s tip to win the race. Expert Rating: \u2b50\u2b50\u2b50\u2b50\u2b50", chance: 75 },
+    { number: 5, name: "Panic Attack", jockey: "Harry Skelton", trainer: "Dan Skelton", age: 10, weight: "10-5", odds: "12/1", oddsDecimal: 13, form: "12-1113", color: "#fd9124", colorSecondary: "#2b375d", silkImage: "silks/PANIC_ATTACK.jpg", aiWriteup: "Dan Skelton\u2019s cash machine this season \u2014 won both the Paddy Power Gold Cup and Coral Gold Cup in sparkling fashion, helping catapult Skelton towards a first trainers\u2019 championship title. That Paddy Power/Coral double is exceptional National form. Third in the Mares\u2019 Chase at Cheltenham was over an inadequate 2m4f. Has a big chance if she stays the marathon trip \u2014 that\u2019s the question, but how many runners don\u2019t have an \u2018if\u2019 hanging over them? A mare hasn\u2019t won the National since 1951. Harry Skelton in the saddle. Expert Rating: \u2b50\u2b50\u2b50", chance: 58 },
+    { number: 6, name: "Haiti Couleurs", jockey: "Sean Bowen", trainer: "Rebecca Curtis", age: 9, weight: "11-10", odds: "14/1", oddsDecimal: 15, form: "1-1P11P", color: "#6e4ca3", colorSecondary: "#bababa", silkImage: "silks/HAITI_COULEURS.jpg", aiWriteup: "Winner of four big races including the Irish and Welsh Grand Nationals \u2014 his handicap mark has shot up 31 pounds! Bidding to give Wales a first Grand National success since Kirkland in 1905. However, pulled up tamely after making most of the running in the Gold Cup, would prefer softer ground than the Good-to-Soft forecast, and it will be hard to dominate from the front in a 34-runner field. Champion jockey Sean Bowen takes the ride. Expert Rating: \u2b50\u2b50\u2b50", chance: 48 },
+    { number: 7, name: "Oscar's Brother", jockey: "TBC", trainer: "Connor King", age: 8, weight: "10-13", odds: "16/1", oddsDecimal: 17, form: "221114", color: "#1fb25a", colorSecondary: "#ffb700", silkImage: "silks/OSCARS_BROTHER.png", aiWriteup: "On the Sporting Life shortlist alongside the market leaders. A very good novice chaser who looks to be crying out for a stamina test like the Grand National. Form of 221114 shows a horse on a relentless upward curve \u2014 three wins this season including a staying-on fourth in the Brown Advisory at Cheltenham. Connor King has only two horses in training \u2014 imagine what a win would mean! Noble Yeats proved novices can win the modern National. Tipped 6th by Sporting Life. Expert Rating: \u2b50\u2b50\u2b50\u2b50", chance: 55 },
+    { number: 8, name: "Captain Cody", jockey: "TBC", trainer: "Willie Mullins", age: 8, weight: "10-10", odds: "16/1", oddsDecimal: 17, form: "U1-37F5", color: "#f2b946", colorSecondary: "#999999", silkImage: "silks/CAPTAIN_CODY.jpg", aiWriteup: "Won the Scottish National last spring under a wonderful hold-up ride from Harry Cobden \u2014 that screamed \u2018Aintree horse.\u2019 Shaped with encouragement on his return at Fairyhouse but hasn\u2019t hit the same heights since, including fifth in the Bobbyjo after an early fall in the Thyestes. The U (unseated) in form is a worry \u2014 none of the last 10 National winners unseated their jockey that season. Trends against, but Mullins wouldn\u2019t run without hope. Expert Rating: \u2b50\u2b50\u2b50", chance: 38 },
+    { number: 9, name: "Johnnywho", jockey: "R P McLernon", trainer: "Jonjo O'Neill", age: 9, weight: "10-4", odds: "16/1", oddsDecimal: 17, form: "25-5351", color: "#1fb25a", colorSecondary: "#ffb700", silkImage: "silks/JOHNNYWHO.png", aiWriteup: "Catapulted into contention by winning the Ultima at Cheltenham \u2014 a proven route to National success (Corach Rambler took it in 2023). Had tired when fifth in the Irish National last season, but that was before a breathing operation which totally transformed him. Crucially, the handicapper can\u2019t reassess \u2014 he\u2019s a massive 6lb well-in at the weights. Got a sighter of the National fences in November. At 9 with 10-4, he perfectly fits the profile. Tipped 2nd by Sporting Life. Expert Rating: \u2b50\u2b50\u2b50\u2b50", chance: 62 },
+    { number: 10, name: "Nick Rockett", jockey: "Patrick Mullins", trainer: "Willie Mullins", age: 9, weight: "11-11", odds: "16/1", oddsDecimal: 17, form: "3/4111-3", color: "#f1b844", colorSecondary: "#6e6e6e", silkImage: "silks/NICK_ROCKETT.jpg", aiWriteup: "The defending champion who gave team Mullins the day of days last year and inspired a song from a local singer-songwriter! But in sharp contrast to 2025, it\u2019s been a race against time to get him ready. Qualified at Downpatrick on just about the final day \u2014 what he did from the second-last offers hope. Bidding to be the first horse since Aldaniti in 1981 to win on just his second outing of the campaign. Massive 23lb rise to 11-11 \u2014 only four winners carried 10-13+ in the last decade. History says no. The Mullins magic says maybe. Expert Rating: \u2b50\u2b50\u2b50", chance: 42 },
+    { number: 11, name: "Monty's Star", jockey: "TBC", trainer: "Henry de Bromhead", age: 9, weight: "11-3", odds: "20/1", oddsDecimal: 21, form: "543-056", color: "#9a2176", colorSecondary: "#b68aa9", silkImage: "silks/MONTYS_STAR.png", aiWriteup: "Ran far better than his finishing position suggests when sixth in the Irish Gold Cup \u2014 his entire season has been geared around Aintree. A touch of class and a strong traveller. The key question: does he stay 4m2f? He could. At 9, he fits the age profile perfectly. Winless since late 2023 but competing at the highest level. In very good hands with de Bromhead. A big player if the stamina kicks in. Expert Rating: \u2b50\u2b50\u2b50", chance: 45 },
+    { number: 12, name: "Final Orders", jockey: "Conor Stone-Walsh", trainer: "Gavin Cromwell", age: 10, weight: "10-5", odds: "25/1", oddsDecimal: 26, form: "P63151", color: "#2d395f", colorSecondary: "#ffe630", silkImage: "silks/FINAL_ORDERS.jpg", aiWriteup: "A dual winner over Cheltenham\u2019s cross-country fences this season \u2014 too good for Favori De Champdou at the Festival. The cross-country route has been a reliable pointer to National success (Tiger Roll, Delta Work). Relished quick ground when making all at Cheltenham. Concern: a heavy fall at Valentine\u2019s on his only previous attempt over these fences. Conor Stone-Walsh takes the ride. Expert Rating: \u2b50\u2b50\u2b50", chance: 38 },
+    { number: 13, name: "Stellar Story", jockey: "TBC", trainer: "Gordon Elliott", age: 9, weight: "10-11", odds: "25/1", oddsDecimal: 26, form: "223-383", color: "#9f1a6d", colorSecondary: "#37192c", silkImage: "silks/STELLAR_STORY.png", aiWriteup: "Runner-up in the Brown Advisory last season, having won the Albert Bartlett 12 months before \u2014 proper Grade 1 form. Far from disgraced when third in the Bobbyjo, trying to concede 8lb to winner Grangeclare West. Gets a hefty 21lb pull at Aintree which transforms the picture. At 9 with 10-11, he fits the ideal winner\u2019s profile. Team Elliott and a horse who always runs his race. Expert verdict: \u2018Not discounted.\u2019 Rating: \u2b50\u2b50\u2b50", chance: 40 },
+    { number: 14, name: "Gorgeous Tom", jockey: "Sean Flanagan", trainer: "Henry de Bromhead", age: 8, weight: "10-9", odds: "25/1", oddsDecimal: 26, form: "44424-5", color: "#2f8843", colorSecondary: "#feea2d", silkImage: "silks/GORGEOUS_TOM.png", aiWriteup: "The experts\u2019 each-way favourite \u2014 Matt Brocklebank and plenty of other good judges fancy this horse. Eye-catching fourth in the Coral Gold Cup at Newbury after being messed about at the start \u2014 should have finished closer. Genuine stamina in his pedigree, and de Bromhead knows what\u2019s needed at Aintree. Sean Flanagan takes the ride. At 8, he\u2019s the perfect age. Tipped 3rd by Sporting Life. Expert Rating: \u2b50\u2b50\u2b50\u2b50", chance: 48 },
+    { number: 15, name: "Jordans", jockey: "Ben Jones", trainer: "Joseph Patrick O'Brien", age: 7, weight: "10-8", odds: "28/1", oddsDecimal: 29, form: "52-85P0", color: "#4a7cff", colorSecondary: "#fff329", silkImage: "silks/JORDANS.jpg", aiWriteup: "Second to Caldwell Potter in the Grade One novice chase at Aintree last spring \u2014 proving he handles the course. Little encouragement this term. Easy enough to excuse him wilting on heavy ground in the Thyestes. At 7, matches Jagwar as the youngest runner. Ben Jones rides for Joseph O\u2019Brien. Expert verdict: \u2018You need to know a Jordan \u2014 nay, like a Jordan \u2014 to be backing this one.\u2019 Rating: \u2b50", chance: 22 },
+    { number: 16, name: "Gerri Colombe", jockey: "TBC", trainer: "Gordon Elliott", age: 10, weight: "11-10", odds: "33/1", oddsDecimal: 34, form: "1/3-P321", color: "#f7cde2", colorSecondary: "#16232e", silkImage: "silks/GERRI_COLOMBE.png", aiWriteup: "Won his first eight races and was a gallant runner-up in the 2024 Gold Cup \u2014 serious class. Missed most of last season but proved he\u2019s no back number, finishing second in the Bobbyjo before winning at Down Royal where Nick Rockett warmed up. Good prep but not obviously well handicapped off 11-10. A win for Gordon Elliott would put him alongside Ginger McCain and Fred Rimell as the most successful National trainer ever. Expert Rating: \u2b50\u2b50", chance: 30 },
+    { number: 17, name: "Favori De Champdou", jockey: "TBC", trainer: "Gordon Elliott", age: 11, weight: "11-1", odds: "33/1", oddsDecimal: 34, form: "05F112", color: "#9f1a6d", colorSecondary: "#38192c", silkImage: "silks/FAVORI_DE_CHAMPDOU.png", aiWriteup: "One the experts love. Won the Paddy Power Chase at a juicy 66/1 over Christmas, then impressed over Cheltenham\u2019s cross-country fences \u2014 runner-up behind Final Orders at the Festival. Gigginstown-owned and Elliott-trained: Tiger Roll he isn\u2019t, but a leading player he definitely is. Arrives right at the top of his game. The F (fall) in form is a concern at 11, but the cross-country route has an excellent record. Tipped 5th by Sporting Life. Expert Rating: \u2b50\u2b50\u2b50\u2b50", chance: 42 },
+    { number: 18, name: "Quai De Bourbon", jockey: "TBC", trainer: "Willie Mullins", age: 7, weight: "10-9", odds: "33/1", oddsDecimal: 34, form: "UB3-PP3", color: "#9f1a6d", colorSecondary: "#37192c", silkImage: "silks/QUAI_DE_BOURBON.png", aiWriteup: "Was a good third in last year\u2019s Irish National \u2014 proving he stays the extreme distance. Back to form with cheekpieces applied at Leopardstown last month \u2014 expect the headgear to stay on. The PP is concerning, though the U was an unseating and B was brought down \u2014 not entirely his fault. At 7, one of the youngest. Trained by Willie Mullins. You know the drill. Expert Rating: \u2b50\u2b50", chance: 20 },
+    { number: 19, name: "Spanish Harlem", jockey: "TBC", trainer: "Willie Mullins", age: 8, weight: "11-3", odds: "40/1", oddsDecimal: 41, form: "4-11PUP", color: "#ffe3ae", colorSecondary: "#00d534", silkImage: "silks/SPANISH_HARLEM.png", aiWriteup: "Runs for Doctor Peter Fitzgerald, founder of Randox \u2014 the race sponsor \u2014 guaranteeing a starting place and adding a fairy tale element. Good winner of the Kerry National in September. Recent form reads an alarming PUP, but the U was when about to win the Thyestes, unseating at the final fence when in front. The last P was a lifeless run in the Bobbyjo however. Like Alan Partridge, he needs to bounce back. Expert Rating: \u2b50\u2b50\u2b50", chance: 22 },
+    { number: 20, name: "Perceval Legallois", jockey: "Harry Cobden", trainer: "Gavin Cromwell", age: 9, weight: "10-9", odds: "40/1", oddsDecimal: 41, form: "411F-P4", color: "#1fb25a", colorSecondary: "#ffb700", silkImage: "silks/PERCEVAL_LEGALLOIS.png", aiWriteup: "Looked to have plenty going for him last year and went off at only 10/1 \u2014 but fell at Valentine\u2019s Brook on the first circuit. Returns without the burden of market confidence, at much chunkier odds. Top jockey Harry Cobden takes the ride. Has run poorly in two races this term, but connections can pull rabbits out of hats. French-bred horses have a fine National record. Expert Rating: \u2b50\u2b50", chance: 20 },
+    { number: 21, name: "Lecky Watson", jockey: "TBC", trainer: "Willie Mullins", age: 8, weight: "11-2", odds: "40/1", oddsDecimal: 41, form: "1F-77P8", color: "#ed1a3b", colorSecondary: "#4b1d22", silkImage: "silks/LECKY_WATSON.png", aiWriteup: "Won the Brown Advisory at Cheltenham last season \u2014 proper Grade 1 credentials. But no impact in four Grade Ones since, then last of eight in the Bobbyjo. The fall in his form is a worry \u2014 8 of the last 10 National winners hadn\u2019t fallen that season. He IS trained by Willie Mullins in case you draw him and need hope. So cling to that. Expert Rating: \u2b50\u2b50", chance: 15 },
+    { number: 22, name: "Banbridge", jockey: "J J Slevin", trainer: "Joseph Patrick O'Brien", age: 10, weight: "11-11", odds: "50/1", oddsDecimal: 51, form: "174-423", color: "#083c67", colorSecondary: "#ed1639", silkImage: "silks/BANBRIDGE.png", aiWriteup: "A class act who came within a nose of retaining his King George VI Chase crown at Kempton on Boxing Day \u2014 top-tier 3-mile ability. An excellent jumper with J J Slevin booked. But four-and-a-quarter miles? That\u2019s the universal concern. Underwhelming at Cheltenham last time. Expert verdict: \u2018He stays three miles but four-and-a-quarter? Not for me.\u2019 Rating: \u2b50\u2b50", chance: 18 },
+    { number: 23, name: "Spillane's Tower", jockey: "TBC", trainer: "James Joseph Mangan", age: 8, weight: "11-8", odds: "50/1", oddsDecimal: 51, form: "252-931", color: "#1fb25a", colorSecondary: "#ffb700", silkImage: "silks/SPILLANES_TOWER.png", aiWriteup: "Won two Grade One contests as a novice and got back on track winning the Cotswold Chase at Cheltenham. Was a late withdrawal from the Gold Cup as the ground wasn\u2019t soft enough. Jimmy Mangan and his trademark hat would have been one of the great National stories \u2014 but reports suggest he may be redirected to Thursday\u2019s Aintree Bowl. Wears the JP McManus green and gold silks. Expert Rating: \u2b50", chance: 14 },
+    { number: 24, name: "Three Card Brag", jockey: "TBC", trainer: "Gordon Elliott", age: 9, weight: "11-0", odds: "50/1", oddsDecimal: 51, form: "0-82127", color: "#222222", colorSecondary: "#616161", silkImage: "silks/THREE_CARD_BRAG.jpg", aiWriteup: "Trailed home 11th last year when well fancied and didn\u2019t seem to stay the trip. Now 10lb higher after a good campaign including a Cheltenham win in October before chasing home Panic Attack at Newbury. Named after a card game \u2014 fitting for racing\u2019s biggest gamble \u2014 but the distance finds him out. Expert verdict: \u2018I can\u2019t play the card game nor have this fella as the National winner.\u2019 Rating: \u2b50\u2b50", chance: 12 },
+    { number: 25, name: "Firefox", jockey: "TBC", trainer: "Gordon Elliott", age: 8, weight: "11-4", odds: "66/1", oddsDecimal: 67, form: "62-1246", color: "#108946", colorSecondary: "#df283d", silkImage: "silks/FIREFOX.png", aiWriteup: "Showed new stamina reserves when a staying-on fourth in the Irish Gold Cup, but ran out of puff when sixth in the Cheltenham Gold Cup \u2014 and the National requires another entire mile on top. That\u2019s asking a lot. At 8, he\u2019s the right age and Gordon Elliott knows the National. Expert verdict: \u2018Didn\u2019t stay three-and-a-quarter miles... goodness knows what he\u2019ll make of another mile.\u2019 Rating: \u2b50\u2b50", chance: 10 },
+    { number: 26, name: "Answer To Kayf", jockey: "TBC", trainer: "Terrence O'Brien", age: 10, weight: "10-8", odds: "66/1", oddsDecimal: 67, form: "106-144", color: "#83aee5", colorSecondary: "#feef34", silkImage: "silks/ANSWER_TO_KAYF.jpg", aiWriteup: "Won the Troytown Chase at Navan in November \u2014 a decent staying chase. Fair fourth in the Bobbyjo. The problem: he loves the mud, and the ground at Aintree is forecast Good-to-Soft. From the small Terrence O\u2019Brien stable for a fairy-tale element. Expert verdict: \u2018Fourth in the Bobbyjo and loves the mud. Won\u2019t get that on Saturday.\u2019 Rating: \u2b50", chance: 10 },
+    { number: 27, name: "Twig", jockey: "Beau Morgan", trainer: "Ben Pauling", age: 11, weight: "10-4", odds: "66/1", oddsDecimal: 67, form: "770-117", color: "#387d09", colorSecondary: "#f8dda8", silkImage: "silks/TWIG.jpg", aiWriteup: "Finished tenth last year (\u2018second of the British runners\u2019 if you\u2019re patriotic) and returned to Aintree in November to win the Becher Chase over the National fences. William Hill offer a \u00a3500,000 bonus if he follows up Saturday. At 11, he\u2019s one of the oldest and the deeper quality this year makes a repeat tough. Young jockey Beau Morgan takes the ride. Expert Rating: \u2b50\u2b50", chance: 15 },
+    { number: 28, name: "High Class Hero", jockey: "TBC", trainer: "Willie Mullins", age: 9, weight: "10-11", odds: "66/1", oddsDecimal: 67, form: "123-2PP", color: "#d73334", colorSecondary: "#ecbab3", silkImage: "silks/HIGH_CLASS_HERO.jpg", aiWriteup: "Looked the ideal National sort when third in the Bet365 Gold Cup at Sandown last spring. Encouraging return at Punchestown but has since pulled up twice at Gowran and Naas \u2014 deeply concerning. He IS trained by Willie Mullins in case you draw him and need hope. So cling to that. \u2018Hang on, I might already have said that\u2019 \u2014 David Ord, Sporting Life (he had!). At 9, perfect age. At PP form, imperfect prep. Expert Rating: \u2b50\u2b50", chance: 12 },
+    { number: 29, name: "Champ Kiely", jockey: "TBC", trainer: "Willie Mullins", age: 10, weight: "11-1", odds: "80/1", oddsDecimal: 81, form: "31-2S57", color: "#007efd", colorSecondary: "#06d726", silkImage: "silks/CHAMP_KIELY.png", aiWriteup: "A genuine dark horse. Patrick Mullins himself has publicly stated he likes this horse\u2019s chance \u2014 and the champion amateur knows Aintree inside out. Grade One winning novice chaser last season who will appreciate the better ground expected at Aintree \u2014 a very different test to the soft-ground slog he\u2019s endured all campaign. If he takes to faster conditions, he\u2019s a lively outsider at a massive price. Expert Rating: \u2b50\u2b50\u2b50", chance: 25 },
+    { number: 30, name: "Mr Vango", jockey: "Jack Tudor", trainer: "Sara Bradstock", age: 10, weight: "10-12", odds: "80/1", oddsDecimal: 81, form: "111-2PP", color: "#487bfb", colorSecondary: "#e32223", silkImage: "silks/MR_VANGO.jpg", aiWriteup: "One of the tallest horses in training \u2014 a real eye-catcher in the paddock! Came within a short head of landing the Becher Chase over the National fences in December. Won the Midlands National last season as a dour stayer. But unless the Norwegian weather forecasters are miles off, he won\u2019t get his ground \u2014 soft seems essential. Jack Tudor rides for Sara Bradstock, who trained Gold Cup winner Coneygree. Expert Rating: \u2b50", chance: 10 },
+    { number: 31, name: "Marble Sands", jockey: "Kielan Woods", trainer: "David Killahena & Graeme McPherson", age: 10, weight: "10-0", odds: "100/1", oddsDecimal: 101, form: "3250-12", color: "#27365b", colorSecondary: "#f290b1", silkImage: "silks/MARBLE_SANDS.png", aiWriteup: "Got round in the Topham over the National fences \u2014 experience is valuable. Showed a new side pouncing from off the pace to win at Cheltenham in November. Carries a featherweight 10-0 with Kielan Woods aboard. The National should suit better than the Topham\u2019s shorter distance. Expert verdict: \u2018He\u2019s in deep here.\u2019 Rating: \u2b50", chance: 8 },
+    { number: 32, name: "Top Of The Bill", jockey: "Toby McCain-Mitchell", trainer: "Nigel & Willy Twiston-Davies", age: 10, weight: "10-5", odds: "100/1", oddsDecimal: 101, form: "4P1-192", color: "#fec92f", colorSecondary: "#c49500", silkImage: "silks/TOP_OF_THE_BILL.jpg", aiWriteup: "Runner-up in Haydock\u2019s Grand National Trial last time \u2014 though all runners finished in a huddle. Can be a little moody, not ideal at 30 National fences. The jockey booking adds romance: Toby McCain-Mitchell is the grandson of Ginger McCain, who trained three National winners including the immortal Red Rum. Expert verdict: \u2018He isn\u2019t [top of the bill]. Which might upset him as he can be moody.\u2019 Rating: \u2b50", chance: 8 },
+    { number: 33, name: "Beauport", jockey: "Sam Twiston-Davies", trainer: "Nigel & Willy Twiston-Davies", age: 10, weight: "10-11", odds: "100/1", oddsDecimal: 101, form: "320-4P4", color: "#84fafe", colorSecondary: "#ecb946", silkImage: "silks/BEAUPORT.jpg", aiWriteup: "Runs in the famous colours of Corbiere, the 1983 Grand National winner \u2014 the silks have pedigree! Finished 12th last year having tired after racing too prominently. Won the Midlands National in 2024 so stamina isn\u2019t an issue. Sam Twiston-Davies rides for his father and brother\u2019s stable. Expert verdict: \u2018Not easy to make a convincing case.\u2019 Rating: \u2b50", chance: 7 },
+    { number: 34, name: "The Real Whacker", jockey: "Gavin Sheehan", trainer: "Patrick Neville", age: 10, weight: "10-9", odds: "100/1", oddsDecimal: 101, form: "454-256", color: "#fd0026", colorSecondary: "#f02a46", silkImage: "silks/THE_REAL_WHACKER.png", aiWriteup: "Won the Brown Advisory three years ago and Charlie Hall at Wetherby in 2024 \u2014 genuine class buried in there. But this season it\u2019s been elusive: last of five in the Charlie Hall and failed to beat a rival over hurdles at Cheltenham on New Year\u2019s Day. Headgear failed to reignite his spark. Gavin Sheehan rides from the tiny Neville yard. Expert verdict, bluntly: \u2018I\u2019m struggling.\u2019 Rating: \u2b50", chance: 6 }
 ];
 
 const DEFAULT_PEOPLE = [
-    "Alice", "Bob", "Charlie", "Diana", "Edward",
-    "Fiona", "George", "Hannah", "Ivan", "Julia",
-    "Kevin", "Laura", "Michael", "Nora", "Oscar",
-    "Penny", "Quentin", "Rachel", "Steve", "Tina",
-    "Ulrich", "Vera", "William", "Xena", "Yusuf",
-    "Zoe", "Aidan", "Bridget", "Ciaran", "Deirdre",
-    "Eoin", "Grainne", "Hugh", "Siobhan"
+    "Fran", "Aileen", "Shane", "Joanne", "Megan O'T",
+    "Colin", "Chris", "Angela", "Liv", "Mary",
+    "Donal", "Ashling", "Jen", "Caroline", "Gretta",
+    "James", "Liam", "Jason", "Anna", "Megan C",
+    "Neil", "Brian", "Becca", "Hannah", "Gerry C",
+    "Ollie", "Alice", "Lauren", "Niamh", "Sadhbh",
+    "Keith", "Amy G", "Croía", "Martin"
 ];
 
 // ============================================================
 //  APP STATE
 // ============================================================
+const DEFAULT_RESERVES = [
+    { number: 35, name: "Pied Piper", jockey: "TBC", trainer: "Gordon Elliott", age: 8, weight: "10-3", odds: "N/A", oddsDecimal: 999, form: "2569FF", color: "#062252", colorSecondary: "#319a26", silkImage: "silks/PIED_PIPER.png", aiWriteup: "1st Reserve. Gordon Elliott has called him an \u2018interesting contender\u2019 but this strong traveller has a big stamina question and has fallen on his past two starts including at Cheltenham. From Ireland, not Hamelin. Expert Rating: \u2b50", chance: 5 },
+    { number: 36, name: "Imperial Saint", jockey: "TBC", trainer: "Philip Hobbs & Johnson White", age: 8, weight: "10-2", odds: "N/A", oddsDecimal: 999, form: "42-5618", color: "#fdac22", colorSecondary: "#d48800", silkImage: "silks/IMPERIAL_SAINT.png", aiWriteup: "2nd Reserve. Owned by Richard Johnson, who holds the record for most Grand National appearances as a jockey \u2014 without ever winning! Loves Aintree\u2019s Mildmay Course and landed the Peter Marsh Chase impressively. If he gets in, the Richard Johnson Racing Club are in for a fun afternoon. Expert Rating: \u2b50\u2b50\u2b50", chance: 18 },
+    { number: 37, name: "Amirite", jockey: "TBC", trainer: "Henry de Bromhead", age: 10, weight: "10-2", odds: "N/A", oddsDecimal: 999, form: "4P-140P", color: "#ffee00", colorSecondary: "#ccbb00", silkImage: "silks/AMIRITE.jpg", aiWriteup: "3rd Reserve. Fourth in the Topham last year and same spot in the Galway Plate \u2014 handles big-field handicaps. Recent form less compelling. Expert verdict: \u2018Depends on what you\u2019re asking. The handicapper has looked in charge.\u2019 Rating: \u2b50\u2b50", chance: 8 },
+    { number: 38, name: "Ain't That A Shame", jockey: "TBC", trainer: "T Ellis", age: 12, weight: "10-2", odds: "N/A", oddsDecimal: 999, form: "09P16/F", color: "#d7d7d7", colorSecondary: "#1a1d1e", silkImage: "silks/AINT_THAT_A_SHAME.png", aiWriteup: "4th Reserve. Ran a blinder to finish sixth behind I Am Maximus in the 2024 National \u2014 he definitely takes to Aintree. Now 12, fell at the last on his only start for new trainer Tom Ellis at Kelso. A proper veteran who knows the course. Expert Rating: \u2b50\u2b50", chance: 5 },
+    { number: 39, name: "Soul Icon", jockey: "TBC", trainer: "Keiran Burke", age: 9, weight: "10-1", odds: "N/A", oddsDecimal: 999, form: "29-U45", color: "#e52a36", colorSecondary: "#b01a25", silkImage: "silks/SOUL_ICON.png", aiWriteup: "5th Reserve. Got around safely in last year\u2019s Topham which is encouraging. But seems at his best dominating small fields \u2014 not the Grand National\u2019s style. Expert Rating: \u2b50", chance: 3 },
+    { number: 40, name: "Hyland", jockey: "TBC", trainer: "Nicky Henderson", age: 9, weight: "10-1", odds: "N/A", oddsDecimal: 999, form: "P-9746", color: "#d9d9d9", colorSecondary: "#373737", silkImage: "silks/HYLAND.jpg", aiWriteup: "6th Reserve. Did you know Nicky Henderson has never won the Grand National? Hyland pulled up in the race last year. He\u2019s better than that but needs to prove it if called upon. A grey horse who always captures the public\u2019s imagination. Expert Rating: \u2b50\u2b50", chance: 5 }
+];
+
 let appState = {
     horses: [],
     people: [],
     draws: {},        // { personName: horseNumber }
     predictions: {},  // { personName: { first: horseNum, second: horseNum, third: horseNum } }
     results: [],      // [{ position: 1, horseNumber: X }, ...]
+    nonRunners: {},   // { horseNumber: true } — horses withdrawn before race
+    reserves: [],     // reserve horse objects
+    reserveAssignments: {}, // { personName: reserveHorseNumber } — replacement horses
+    unluckyLosers: {},      // { personName: true } — no reserve available
     settings: {
         drawOpen: true,
         predictionsOpen: true,
@@ -1305,10 +1750,12 @@ let countdownInterval;
 //  SILK IMAGE HELPER
 // ============================================================
 function getSilkHtml(horse, size = 40) {
-    if (horse && horse.silkImage) {
-        return `<div class="silk-icon" style="width: ${size}px; height: ${size}px; overflow: hidden;"><img src="${horse.silkImage}" alt="${horse.name}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.style.background='${horse.color}'; this.parentElement.innerHTML='${horse.number}';"></div>`;
+    if (!horse) return `<div class="silk-icon" style="background: #ccc; width: ${size}px; height: ${size}px; font-size: ${size > 50 ? '1.3' : '1'}em;">?</div>`;
+    if (horse.silkImage) {
+        return `<div class="silk-icon" style="width: ${size}px; height: ${size}px; overflow: hidden; border-radius: 4px; border: 2px solid rgba(0,0,0,0.15);"><img src="${horse.silkImage}" alt="${horse.name}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.style.background='linear-gradient(135deg, ${horse.color} 50%, ${horse.colorSecondary} 50%)'; this.parentElement.style.borderRadius='50%'; this.parentElement.innerHTML='${horse.number}'; this.parentElement.style.color='white'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.parentElement.style.fontWeight='bold'; this.parentElement.style.textShadow='1px 1px 2px rgba(0,0,0,0.6)';"></div>`;
     }
-    return `<div class="silk-icon" style="background: ${horse ? horse.color : '#ccc'}; width: ${size}px; height: ${size}px; font-size: ${size > 50 ? '1.3' : '1'}em;">${horse ? horse.number : '?'}</div>`;
+    const bg = `background: linear-gradient(135deg, ${horse.color} 50%, ${horse.colorSecondary} 50%)`;
+    return `<div class="silk-icon" style="${bg}; width: ${size}px; height: ${size}px; font-size: ${size > 50 ? '1.3' : '1'}em; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">${horse.number}</div>`;
 }
 
 // ============================================================
@@ -1343,16 +1790,25 @@ function setupFirebaseListeners() {
         const data = snapshot.val();
         if (data) {
             appState.horses = data.horses || DEFAULT_HORSES;
-            appState.people = data.people || DEFAULT_PEOPLE;
+            appState.people = DEFAULT_PEOPLE;
             appState.draws = data.draws || {};
             appState.drawReveals = data.drawReveals || {};
             appState.predictions = data.predictions || {};
             appState.results = data.results || [];
+            appState.nonRunners = data.nonRunners || {};
+            appState.reserves = data.reserves || DEFAULT_RESERVES;
+            appState.reserveAssignments = data.reserveAssignments || {};
+            appState.unluckyLosers = data.unluckyLosers || {};
             appState.settings = { ...appState.settings, ...(data.settings || {}) };
+            // Sync updated people list to Firebase
+            if (JSON.stringify(data.people) !== JSON.stringify(DEFAULT_PEOPLE)) {
+                db.ref('sweepstake/people').set(DEFAULT_PEOPLE);
+            }
         } else {
             // First run — seed with defaults
             appState.horses = DEFAULT_HORSES;
             appState.people = DEFAULT_PEOPLE;
+            appState.reserves = DEFAULT_RESERVES;
             saveToFirebase();
         }
         renderAll();
@@ -1368,6 +1824,10 @@ function saveToFirebase() {
             drawReveals: appState.drawReveals,
             predictions: appState.predictions,
             results: appState.results,
+            nonRunners: appState.nonRunners,
+            reserves: appState.reserves,
+            reserveAssignments: appState.reserveAssignments,
+            unluckyLosers: appState.unluckyLosers,
             settings: appState.settings
         });
     }
@@ -1380,24 +1840,52 @@ function loadFromLocalStorage() {
         if (saved) {
             const data = JSON.parse(saved);
             appState.horses = data.horses || DEFAULT_HORSES;
-            appState.people = data.people || DEFAULT_PEOPLE;
+            appState.people = DEFAULT_PEOPLE;
             appState.draws = data.draws || {};
             appState.drawReveals = data.drawReveals || {};
             appState.predictions = data.predictions || {};
             appState.results = data.results || [];
+            appState.nonRunners = data.nonRunners || {};
+            appState.reserves = data.reserves || DEFAULT_RESERVES;
+            appState.reserveAssignments = data.reserveAssignments || {};
+            appState.unluckyLosers = data.unluckyLosers || {};
             appState.settings = { ...appState.settings, ...(data.settings || {}) };
         } else {
             appState.horses = DEFAULT_HORSES;
             appState.people = DEFAULT_PEOPLE;
+            appState.reserves = DEFAULT_RESERVES;
         }
     } catch {
         appState.horses = DEFAULT_HORSES;
         appState.people = DEFAULT_PEOPLE;
+        appState.reserves = DEFAULT_RESERVES;
     }
 }
 
 function saveToLocalStorage() {
     localStorage.setItem('sweepstake_data', JSON.stringify(appState));
+}
+
+function resetToDefaults() {
+    if (!confirm('This will overwrite all saved horse and reserve data with the latest defaults from the code. Draws, predictions, results, and people will be kept. Continue?')) return;
+    appState.horses = DEFAULT_HORSES;
+    appState.reserves = DEFAULT_RESERVES;
+    appState.nonRunners = {};
+    appState.reserveAssignments = {};
+    appState.unluckyLosers = {};
+    saveToFirebase();
+    renderAll();
+    const msg = document.getElementById('resetDefaultsMsg');
+    if (msg) { msg.innerHTML = '<span style="color:green;">✅ Horses & reserves reset to defaults and synced!</span>'; }
+}
+
+function resetAllPredictions() {
+    if (!confirm('This will permanently delete ALL user predictions. This cannot be undone. Continue?')) return;
+    appState.predictions = {};
+    saveToFirebase();
+    renderAll();
+    const msg = document.getElementById('resetPredictionsMsg');
+    if (msg) { msg.innerHTML = '<span style="color:green;">✅ All predictions cleared!</span>'; }
 }
 
 function hideLoading() {
@@ -1408,7 +1896,7 @@ function hideLoading() {
 //  NAVIGATION
 // ============================================================
 function showPage(page) {
-    const pages = ['home', 'draw', 'runners', 'sweepstake', 'predictions', 'raceday', 'admin'];
+    const pages = ['home', 'draw', 'runners', 'sweepstake', 'predictions', 'aiPredictions', 'raceday', 'admin'];
     pages.forEach(p => {
         document.getElementById(p + 'Page').classList.add('hidden');
         const navBtn = document.getElementById('nav-' + p);
@@ -1749,8 +2237,9 @@ function renderRunnersPage() {
 
     horses.forEach(horse => {
         const drawnBy = drawReverse[horse.number];
+        const nonRunner = isNonRunner(horse.number);
         const card = document.createElement('div');
-        card.className = 'horse-card';
+        card.className = 'horse-card' + (nonRunner ? ' non-runner' : '');
         card.setAttribute('data-odds', horse.oddsDecimal);
         card.setAttribute('data-name', horse.name.toLowerCase());
         card.setAttribute('data-jockey', horse.jockey.toLowerCase());
@@ -1763,7 +2252,7 @@ function renderRunnersPage() {
                     ${getSilkHtml(horse, 40)}
                     <span style="font-weight: bold; font-size: 1.05em;">${horse.name}</span>
                 </div>
-                <span class="horse-number">${horse.odds}</span>
+                <span class="horse-number">${nonRunner ? '🚫 N/R' : horse.odds}</span>
             </div>
             <div class="horse-card-body">
                 <div class="horse-info-row"><span>Jockey</span><span>${horse.jockey}</span></div>
@@ -1773,7 +2262,7 @@ function renderRunnersPage() {
             </div>
             <div class="horse-card-footer">
                 <span class="drawn-by">${drawnBy ? '👤 ' + drawnBy : '⏳ Not drawn'}</span>
-                <span class="odds-badge">${horse.odds}</span>
+                <span class="odds-badge">${nonRunner ? 'NON-RUNNER' : horse.odds}</span>
             </div>
         `;
 
@@ -1898,19 +2387,38 @@ function renderSweepstakePage() {
     sortedPeople.forEach(person => {
         const horseNum = appState.draws[person];
         const horse = horseNum ? appState.horses.find(h => h.number === horseNum) : null;
+        const nonRunner = horse && isNonRunner(horse.number);
+        const reserveNum = appState.reserveAssignments && appState.reserveAssignments[person];
+        const reserveHorse = reserveNum ? (appState.reserves || []).find(r => r.number === reserveNum) : null;
+        const isUnlucky = appState.unluckyLosers && appState.unluckyLosers[person];
+        const activeHorse = reserveHorse || (horse && !nonRunner ? horse : null);
 
         const card = document.createElement('div');
-        card.className = 'sweep-card' + (horse ? '' : ' not-drawn');
-        if (horse) card.style.cursor = 'pointer';
-        if (horse) card.onclick = () => openHorseModal(horse.number);
+        card.className = 'sweep-card' + (activeHorse ? '' : ' not-drawn') + (isUnlucky ? ' unlucky-loser' : '') + (nonRunner && !reserveHorse ? ' non-runner-person' : '');
+        if (activeHorse) card.style.cursor = 'pointer';
+        if (activeHorse && !reserveHorse) card.onclick = () => openHorseModal(activeHorse.number);
+
+        let statusHtml;
+        if (isUnlucky) {
+            statusHtml = `<div class="horse-assign" style="color: #dc3545;">😞 Unlucky Loser <span style="text-decoration: line-through; color: #999; font-size: 0.85em;">(${horse ? horse.name : ''})</span></div>`;
+        } else if (reserveHorse) {
+            statusHtml = `<div class="horse-assign">
+                <strong>${reserveHorse.name}</strong> (Reserve)
+                <div style="font-size: 0.8em; color: #999; text-decoration: line-through;">${horse ? horse.name : ''} - N/R</div>
+            </div>`;
+        } else if (nonRunner) {
+            statusHtml = `<div class="horse-assign" style="color: #e67e22;">⏳ <span style="text-decoration: line-through;">${horse.name}</span> — Non-Runner (awaiting reserve)</div>`;
+        } else if (horse) {
+            statusHtml = `<div class="horse-assign"><strong>${horse.name}</strong> (${horse.odds})</div>`;
+        } else {
+            statusHtml = `<div class="horse-assign">Not drawn yet</div>`;
+        }
 
         card.innerHTML = `
-            ${getSilkHtml(horse, 40)}
+            ${getSilkHtml(activeHorse || horse, 40)}
             <div>
                 <div class="person-name">${person}</div>
-                <div class="horse-assign">
-                    ${horse ? `<strong>${horse.name}</strong> (${horse.odds})` : 'Not drawn yet'}
-                </div>
+                ${statusHtml}
             </div>
         `;
 
@@ -2091,6 +2599,7 @@ function showAdminTab(tabId) {
 
     if (tabId === 'results-admin') renderResultsAdmin();
     if (tabId === 'draw-admin') renderDrawAdmin();
+    if (tabId === 'nonrunner-admin') renderNonRunnerAdmin();
 }
 
 function renderDrawAdmin() {
@@ -2193,6 +2702,261 @@ function savePeopleList() {
     alert(`${lines.length} people saved!`);
 }
 
+// ============================================================
+//  NON-RUNNERS & RESERVES
+// ============================================================
+function isNonRunner(horseNumber) {
+    return appState.nonRunners && appState.nonRunners[horseNumber];
+}
+
+function getAffectedPeople() {
+    // People whose drawn horse is a non-runner
+    const affected = [];
+    Object.entries(appState.draws).forEach(([person, horseNum]) => {
+        if (isNonRunner(horseNum)) {
+            affected.push(person);
+        }
+    });
+    return affected;
+}
+
+function getAvailableReserves() {
+    // Reserves not yet assigned to anyone
+    const assignedReserves = new Set(Object.values(appState.reserveAssignments || {}));
+    return (appState.reserves || []).filter(r => !assignedReserves.has(r.number));
+}
+
+function getEffectiveHorse(person) {
+    // Returns the person's active horse (reserve if assigned, original if not non-runner)
+    if (appState.reserveAssignments && appState.reserveAssignments[person]) {
+        const resNum = appState.reserveAssignments[person];
+        return appState.reserves.find(r => r.number === resNum) || null;
+    }
+    const horseNum = appState.draws[person];
+    if (!horseNum) return null;
+    if (isNonRunner(horseNum)) return null; // non-runner, no replacement yet
+    return appState.horses.find(h => h.number === horseNum) || null;
+}
+
+function markNonRunner() {
+    const sel = document.getElementById('nonRunnerSelect');
+    const horseNum = parseInt(sel.value);
+    if (!horseNum) { alert('Select a horse first.'); return; }
+    const horse = appState.horses.find(h => h.number === horseNum);
+    if (!horse) return;
+    if (isNonRunner(horseNum)) { alert(`${horse.name} is already marked as a non-runner.`); return; }
+    if (!confirm(`Mark ${horse.name} as a non-runner? This means they won't race.`)) return;
+
+    if (!appState.nonRunners) appState.nonRunners = {};
+    appState.nonRunners[horseNum] = true;
+    saveToFirebase();
+    renderNonRunnerAdmin();
+    renderAll();
+}
+
+function reinstateRunner(horseNum) {
+    if (!confirm('Reinstate this horse as a runner?')) return;
+    delete appState.nonRunners[horseNum];
+    // Also remove any reserve assignments for people who had this horse
+    Object.entries(appState.draws).forEach(([person, num]) => {
+        if (num === horseNum) {
+            delete appState.reserveAssignments[person];
+            delete appState.unluckyLosers[person];
+        }
+    });
+    saveToFirebase();
+    renderNonRunnerAdmin();
+    renderAll();
+}
+
+function assignReserve(person, reserveNum) {
+    if (!appState.reserveAssignments) appState.reserveAssignments = {};
+    appState.reserveAssignments[person] = reserveNum;
+    if (appState.unluckyLosers) delete appState.unluckyLosers[person];
+    saveToFirebase();
+    renderNonRunnerAdmin();
+    renderAll();
+}
+
+function removeReserveAssignment(person) {
+    if (!confirm(`Remove reserve assignment for ${person}?`)) return;
+    delete appState.reserveAssignments[person];
+    saveToFirebase();
+    renderNonRunnerAdmin();
+    renderAll();
+}
+
+function markUnluckyLoser(person) {
+    if (!confirm(`Mark ${person} as an unlucky loser? (No reserve available)`)) return;
+    if (!appState.unluckyLosers) appState.unluckyLosers = {};
+    appState.unluckyLosers[person] = true;
+    if (appState.reserveAssignments) delete appState.reserveAssignments[person];
+    saveToFirebase();
+    renderNonRunnerAdmin();
+    renderAll();
+}
+
+function removeUnluckyLoser(person) {
+    delete appState.unluckyLosers[person];
+    saveToFirebase();
+    renderNonRunnerAdmin();
+    renderAll();
+}
+
+function randomizeReserves() {
+    const affected = getAffectedPeople().filter(p =>
+        !appState.reserveAssignments[p] && !appState.unluckyLosers[p]
+    );
+    if (affected.length === 0) { alert('No unassigned affected people.'); return; }
+
+    const available = getAvailableReserves();
+    if (available.length === 0) { alert('No reserves available. Some people will be unlucky losers.'); return; }
+
+    const shuffledReserves = [...available].sort(() => Math.random() - 0.5);
+    const shuffledPeople = [...affected].sort(() => Math.random() - 0.5);
+
+    let assigned = 0;
+    shuffledPeople.forEach((person, i) => {
+        if (i < shuffledReserves.length) {
+            appState.reserveAssignments[person] = shuffledReserves[i].number;
+            assigned++;
+        } else {
+            appState.unluckyLosers[person] = true;
+        }
+    });
+
+    saveToFirebase();
+    renderNonRunnerAdmin();
+    renderAll();
+    const unlucky = shuffledPeople.length - assigned;
+    let msg = `${assigned} reserve(s) randomly assigned.`;
+    if (unlucky > 0) msg += ` ${unlucky} person(s) marked as unlucky losers (not enough reserves).`;
+    alert(msg);
+}
+
+function loadReservesToTextarea() {
+    document.getElementById('reservesJson').value = JSON.stringify(appState.reserves || DEFAULT_RESERVES, null, 2);
+}
+
+function saveReservesFromJson() {
+    try {
+        const data = JSON.parse(document.getElementById('reservesJson').value);
+        if (!Array.isArray(data)) throw new Error('Must be an array');
+        appState.reserves = data;
+        saveToFirebase();
+        renderNonRunnerAdmin();
+        alert('Reserves saved!');
+    } catch (e) {
+        alert('Invalid JSON: ' + e.message);
+    }
+}
+
+function renderNonRunnerAdmin() {
+    // Populate the non-runner horse dropdown
+    const sel = document.getElementById('nonRunnerSelect');
+    sel.innerHTML = '<option value="">-- Select Horse --</option>';
+    [...appState.horses].sort((a, b) => a.number - b.number).forEach(h => {
+        if (!isNonRunner(h.number)) {
+            const opt = document.createElement('option');
+            opt.value = h.number;
+            opt.textContent = `${h.number}. ${h.name} (${h.odds})`;
+            sel.appendChild(opt);
+        }
+    });
+
+    // Show current non-runners
+    const nrList = document.getElementById('nonRunnerList');
+    const nonRunnerNums = Object.keys(appState.nonRunners || {}).map(Number);
+    if (nonRunnerNums.length === 0) {
+        nrList.innerHTML = '<p style="color: #999; font-style: italic;">No non-runners declared.</p>';
+    } else {
+        let html = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+        nonRunnerNums.forEach(num => {
+            const horse = appState.horses.find(h => h.number === num);
+            if (!horse) return;
+            // Find who drew this horse
+            const drawnBy = Object.entries(appState.draws).find(([_, n]) => n === num);
+            html += `<div style="background: #ffe0e0; padding: 8px 14px; border-radius: 6px; border: 1px solid #f5c6cb; display: flex; align-items: center; gap: 8px;">
+                <span style="text-decoration: line-through; font-weight: bold;">${horse.number}. ${horse.name}</span>
+                ${drawnBy ? `<span style="color: #666; font-size: 0.85em;">(drawn by ${drawnBy[0]})</span>` : ''}
+                <button class="btn btn-sm" onclick="reinstateRunner(${num})" style="padding: 3px 8px; font-size: 0.8em; background: #6c757d; color: white;">Undo</button>
+            </div>`;
+        });
+        html += '</div>';
+        nrList.innerHTML = html;
+    }
+
+    // Affected people list
+    const affectedEl = document.getElementById('affectedPeopleList');
+    const affected = getAffectedPeople();
+    if (affected.length === 0) {
+        affectedEl.innerHTML = '<p style="color: #999; font-style: italic;">No affected participants.</p>';
+    } else {
+        let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+        affected.forEach(person => {
+            const originalHorseNum = appState.draws[person];
+            const originalHorse = appState.horses.find(h => h.number === originalHorseNum);
+            const reserveNum = appState.reserveAssignments && appState.reserveAssignments[person];
+            const reserveHorse = reserveNum ? (appState.reserves || []).find(r => r.number === reserveNum) : null;
+            const isUnlucky = appState.unluckyLosers && appState.unluckyLosers[person];
+            const available = getAvailableReserves();
+
+            let statusHtml;
+            if (reserveHorse) {
+                statusHtml = `<span style="color: #28a745; font-weight: bold;">✅ Assigned: ${reserveHorse.number}. ${reserveHorse.name}</span>
+                    <button class="btn btn-sm" onclick="removeReserveAssignment('${person.replace(/'/g, "\\'")}')" style="padding: 2px 8px; font-size: 0.8em; background: #dc3545; color: white; margin-left: 5px;">Remove</button>`;
+            } else if (isUnlucky) {
+                statusHtml = `<span style="color: #dc3545; font-weight: bold;">😞 Unlucky Loser</span>
+                    <button class="btn btn-sm" onclick="removeUnluckyLoser('${person.replace(/'/g, "\\'")}')" style="padding: 2px 8px; font-size: 0.8em; background: #6c757d; color: white; margin-left: 5px;">Undo</button>`;
+            } else {
+                statusHtml = `<div style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap;">
+                    <select id="reserve-for-${person.replace(/[^a-zA-Z0-9]/g, '_')}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="">-- Pick Reserve --</option>
+                        ${available.map(r => `<option value="${r.number}">${r.number}. ${r.name}</option>`).join('')}
+                    </select>
+                    <button class="btn btn-gold btn-sm" onclick="(function(){ var s=document.getElementById('reserve-for-${person.replace(/[^a-zA-Z0-9]/g, '_')}'); if(s.value) assignReserve('${person.replace(/'/g, "\\'")}', parseInt(s.value)); else alert('Select a reserve first.'); })()" style="padding: 4px 10px; font-size: 0.85em;">Assign</button>
+                    <button class="btn btn-sm" onclick="markUnluckyLoser('${person.replace(/'/g, "\\'")}')" style="padding: 4px 10px; font-size: 0.85em; background: #dc3545; color: white;">Mark Unlucky</button>
+                </div>`;
+            }
+
+            html += `<div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #ddd; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+                <strong style="min-width: 100px;">${person}</strong>
+                <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">${originalHorse ? originalHorse.name : 'Horse #' + originalHorseNum}</span>
+                <span style="color: #999;">→</span>
+                ${statusHtml}
+            </div>`;
+        });
+        html += '</div>';
+        affectedEl.innerHTML = html;
+    }
+
+    // Summary
+    const summaryEl = document.getElementById('nonRunnerSummary');
+    const reserveAssignCount = Object.keys(appState.reserveAssignments || {}).length;
+    const unluckyCount = Object.keys(appState.unluckyLosers || {}).length;
+    const pendingCount = affected.filter(p => !appState.reserveAssignments[p] && !appState.unluckyLosers[p]).length;
+    summaryEl.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+            <div style="text-align: center; padding: 10px; background: #ffe0e0; border-radius: 6px;">
+                <div style="font-size: 1.8em; font-weight: bold; color: #dc3545;">${nonRunnerNums.length}</div>
+                <div style="font-size: 0.85em; color: #666;">Non-Runners</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: #e8f5e9; border-radius: 6px;">
+                <div style="font-size: 1.8em; font-weight: bold; color: #28a745;">${reserveAssignCount}</div>
+                <div style="font-size: 0.85em; color: #666;">Reserves Assigned</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: #fff3cd; border-radius: 6px;">
+                <div style="font-size: 1.8em; font-weight: bold; color: #856404;">${pendingCount}</div>
+                <div style="font-size: 0.85em; color: #666;">Pending</div>
+            </div>
+            <div style="text-align: center; padding: 10px; background: #f8d7da; border-radius: 6px;">
+                <div style="font-size: 1.8em; font-weight: bold; color: #721c24;">${unluckyCount}</div>
+                <div style="font-size: 0.85em; color: #666;">Unlucky Losers</div>
+            </div>
+        </div>
+    `;
+}
+
 // Results Admin
 function renderResultsAdmin() {
     const container = document.getElementById('resultsEntryForm');
@@ -2252,6 +3016,10 @@ function importData(event) {
             if (data.drawReveals) appState.drawReveals = data.drawReveals;
             if (data.predictions) appState.predictions = data.predictions;
             if (data.results) appState.results = data.results;
+            if (data.nonRunners) appState.nonRunners = data.nonRunners;
+            if (data.reserves) appState.reserves = data.reserves;
+            if (data.reserveAssignments) appState.reserveAssignments = data.reserveAssignments;
+            if (data.unluckyLosers) appState.unluckyLosers = data.unluckyLosers;
             if (data.settings) appState.settings = { ...appState.settings, ...data.settings };
             saveToFirebase();
             renderAll();
