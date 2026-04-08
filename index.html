@@ -1882,8 +1882,9 @@ function setupFirebaseListeners() {
             appState.reserveAssignments = data.reserveAssignments || {};
             appState.unluckyLosers = data.unluckyLosers || {};
             appState.settings = { ...appState.settings, ...(data.settings || {}) };
-            // Sync updated people list to Firebase
-            if (JSON.stringify(data.people) !== JSON.stringify(DEFAULT_PEOPLE)) {
+            // Sync updated people list to Firebase (only once)
+            if (!appState._peopleSynced && JSON.stringify(data.people) !== JSON.stringify(DEFAULT_PEOPLE)) {
+                appState._peopleSynced = true;
                 db.ref('sweepstake/people').set(DEFAULT_PEOPLE);
             }
         } else {
@@ -1893,7 +1894,7 @@ function setupFirebaseListeners() {
             appState.reserves = DEFAULT_RESERVES;
             saveToFirebase();
         }
-        renderAll();
+        debouncedRenderAll();
     });
 }
 
@@ -2032,15 +2033,22 @@ function updateCountdown() {
 // ============================================================
 //  RENDER ALL
 // ============================================================
+// Debounce renderAll to prevent rapid-fire re-renders from Firebase
+let _renderAllTimer = null;
+function debouncedRenderAll() {
+    if (_renderAllTimer) clearTimeout(_renderAllTimer);
+    _renderAllTimer = setTimeout(() => { _renderAllTimer = null; renderAll(); }, 300);
+}
+
 function renderAll() {
     renderHomeStatus();
-    // Skip re-rendering pages with dropdowns if user is interacting with a select
+    // Skip re-rendering pages if user is interacting with a form element
     const activeEl = document.activeElement;
-    const isSelectFocused = activeEl && activeEl.tagName === 'SELECT';
-    if (currentPage === 'draw' && !isSelectFocused) renderDrawPage();
+    const isInteracting = activeEl && (activeEl.tagName === 'SELECT' || activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+    if (currentPage === 'draw' && !isInteracting) renderDrawPage();
     if (currentPage === 'runners') renderRunnersPage();
     if (currentPage === 'sweepstake') renderSweepstakePage();
-    if (currentPage === 'predictions' && !isSelectFocused) renderPredictionsPage();
+    if (currentPage === 'predictions' && !isInteracting) renderPredictionsPage();
     if (currentPage === 'raceday') renderRaceDayPage();
 }
 
