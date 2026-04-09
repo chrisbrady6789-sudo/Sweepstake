@@ -2893,7 +2893,7 @@ function isNonRunner(horseNumber) {
 }
 
 function getAffectedPeople() {
-    // People whose drawn horse is a non-runner
+    // People whose drawn horse is a non-runner, OR whose assigned reserve is a non-runner
     const affected = [];
     Object.entries(appState.draws).forEach(([person, horseNum]) => {
         if (isNonRunner(horseNum)) {
@@ -2904,9 +2904,9 @@ function getAffectedPeople() {
 }
 
 function getAvailableReserves() {
-    // Reserves not yet assigned to anyone
+    // Reserves not yet assigned to anyone AND not non-runners
     const assignedReserves = new Set(Object.values(appState.reserveAssignments || {}));
-    return (appState.reserves || []).filter(r => !assignedReserves.has(r.number));
+    return (appState.reserves || []).filter(r => !assignedReserves.has(r.number) && !isNonRunner(r.number));
 }
 
 function findAnyHorse(horseNumber) {
@@ -2931,13 +2931,21 @@ function markNonRunner() {
     const sel = document.getElementById('nonRunnerSelect');
     const horseNum = parseInt(sel.value);
     if (!horseNum) { alert('Select a horse first.'); return; }
-    const horse = appState.horses.find(h => h.number === horseNum);
+    const horse = findAnyHorse(horseNum);
     if (!horse) return;
     if (isNonRunner(horseNum)) { alert(`${horse.name} is already marked as a non-runner.`); return; }
     if (!confirm(`Mark ${horse.name} as a non-runner? This means they won't race.`)) return;
 
     if (!appState.nonRunners) appState.nonRunners = {};
     appState.nonRunners[horseNum] = true;
+
+    // If this is a reserve, unassign anyone who had it
+    if ((appState.reserves || []).some(r => r.number === horseNum)) {
+        Object.entries(appState.reserveAssignments || {}).forEach(([person, num]) => {
+            if (num === horseNum) delete appState.reserveAssignments[person];
+        });
+    }
+
     saveToFirebase();
     renderNonRunnerAdmin();
     renderAll();
@@ -2946,13 +2954,16 @@ function markNonRunner() {
 function reinstateRunner(horseNum) {
     if (!confirm('Reinstate this horse as a runner?')) return;
     delete appState.nonRunners[horseNum];
-    // Also remove any reserve assignments for people who had this horse
-    Object.entries(appState.draws).forEach(([person, num]) => {
-        if (num === horseNum) {
-            delete appState.reserveAssignments[person];
-            delete appState.unluckyLosers[person];
-        }
-    });
+    const isReserve = (appState.reserves || []).some(r => r.number === horseNum);
+    if (!isReserve) {
+        // Main horse reinstated — remove any reserve assignments for people who had this horse
+        Object.entries(appState.draws).forEach(([person, num]) => {
+            if (num === horseNum) {
+                delete appState.reserveAssignments[person];
+                delete appState.unluckyLosers[person];
+            }
+        });
+    }
     saveToFirebase();
     renderNonRunnerAdmin();
     renderAll();
@@ -3041,7 +3052,7 @@ function saveReservesFromJson() {
 }
 
 function renderNonRunnerAdmin() {
-    // Populate the non-runner horse dropdown
+    // Populate the non-runner horse dropdown (main horses + active reserves that aren't already NR)
     const sel = document.getElementById('nonRunnerSelect');
     sel.innerHTML = '<option value="">-- Select Horse --</option>';
     [...appState.horses].sort((a, b) => a.number - b.number).forEach(h => {
@@ -3049,6 +3060,16 @@ function renderNonRunnerAdmin() {
             const opt = document.createElement('option');
             opt.value = h.number;
             opt.textContent = `${h.number}. ${h.name} (${h.odds})`;
+            sel.appendChild(opt);
+        }
+    });
+    // Also include active reserves that could become NR
+    const activeReserveNums = new Set(Object.values(appState.reserveAssignments || {}));
+    (appState.reserves || []).forEach(r => {
+        if (!isNonRunner(r.number)) {
+            const opt = document.createElement('option');
+            opt.value = r.number;
+            opt.textContent = `${r.number}. ${r.name} (Reserve)`;
             sel.appendChild(opt);
         }
     });
@@ -3061,12 +3082,14 @@ function renderNonRunnerAdmin() {
     } else {
         let html = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
         nonRunnerNums.forEach(num => {
-            const horse = appState.horses.find(h => h.number === num);
+            const horse = findAnyHorse(num);
             if (!horse) return;
-            // Find who drew this horse
-            const drawnBy = Object.entries(appState.draws).find(([_, n]) => n === num);
+            const isReserve = (appState.reserves || []).some(r => r.number === num);
+            // Find who drew/was assigned this horse
+            const drawnBy = !isReserve ? Object.entries(appState.draws).find(([_, n]) => n === num) : null;
             html += `<div style="background: #ffe0e0; padding: 8px 14px; border-radius: 6px; border: 1px solid #f5c6cb; display: flex; align-items: center; gap: 8px;">
                 <span style="text-decoration: line-through; font-weight: bold;">${horse.number}. ${horse.name}</span>
+                ${isReserve ? '<span style="color:#17a2b8; font-size:0.8em;">(Reserve)</span>' : ''}
                 ${drawnBy ? `<span style="color: #666; font-size: 0.85em;">(drawn by ${drawnBy[0]})</span>` : ''}
                 <button class="btn btn-sm" onclick="reinstateRunner(${num})" style="padding: 3px 8px; font-size: 0.8em; background: #6c757d; color: white;">Undo</button>
             </div>`;
