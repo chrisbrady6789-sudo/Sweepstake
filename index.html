@@ -1575,6 +1575,7 @@
                 <div class="tab-btn" onclick="showAdminTab('people-admin')">Manage People</div>
                 <div class="tab-btn" onclick="showAdminTab('nonrunner-admin')">Non-Runners</div>
                 <div class="tab-btn" onclick="showAdminTab('results-admin')">Enter Results</div>
+                <div class="tab-btn" onclick="showAdminTab('odds-admin')">Update Odds</div>
                 <div class="tab-btn" onclick="showAdminTab('data-admin')">Data</div>
             </div>
 
@@ -1669,6 +1670,37 @@
                 <p style="margin-bottom: 15px;">Enter the final race result. Select horses in finishing order.</p>
                 <div id="resultsEntryForm"></div>
                 <button class="btn btn-gold" onclick="saveResults()" style="margin-top: 15px;">Save Results</button>
+            </div>
+
+            <!-- Update Odds -->
+            <div id="adminTab-odds-admin" class="hidden">
+                <h3>📊 Update Odds</h3>
+                <p style="margin-bottom: 10px; color: #666;">Quickly update odds for all horses. Enter fractional odds (e.g. 10/1) — decimal is calculated automatically. You can also paste a bulk list.</p>
+                <div style="margin-bottom: 15px; padding: 12px; background: #f0f7ff; border-radius: 8px; border: 1px solid #d0e3f7;">
+                    <h4 style="margin-bottom: 8px;">📋 Bulk Paste</h4>
+                    <p style="color: #666; font-size: 0.85em; margin-bottom: 8px;">Paste from Racing Post, Oddschecker, or simple format. For Racing Post multi-bookmaker tables, the first bookmaker's odds are used.</p>
+                    <textarea id="bulkOddsPaste" style="width:100%; min-height: 80px; font-family: monospace; font-size: 0.85em; border: 1px solid #ccc; border-radius: 5px; padding: 8px;" placeholder="I Am Maximus &#9;7/1&#9;8/1&#9;9/1&#10;Grangeclare West &#9;9/1&#9;10/1&#10;Johnnywho &#9;14/1&#9;12/1"></textarea>
+                    <button class="btn btn-sm" onclick="applyBulkOdds()" style="margin-top: 6px;">Apply Bulk Paste</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="oddsTable" style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                        <thead>
+                            <tr style="background: var(--primary); color: var(--gold);">
+                                <th style="padding: 8px; text-align: left;">#</th>
+                                <th style="padding: 8px; text-align: left;">Horse</th>
+                                <th style="padding: 8px; text-align: left;">Current</th>
+                                <th style="padding: 8px; text-align: left;">New Odds</th>
+                            </tr>
+                        </thead>
+                        <tbody id="oddsTableBody"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 12px; display: flex; gap: 10px; align-items: center;">
+                    <button class="btn btn-gold" onclick="saveAllOdds()">💾 Save All Odds</button>
+                    <button class="btn btn-sm" onclick="loadOddsTable()">↻ Reload</button>
+                    <span id="oddsSaveMsg" style="font-size: 0.9em;"></span>
+                </div>
+                <p style="margin-top: 10px; color: #999; font-size: 0.8em;">💡 Tip: Go to <a href="https://www.racingpost.com/racecards" target="_blank" rel="noopener">Racing Post</a> → Grand National → select the odds table → copy all rows → paste here. First bookmaker column is used.</p>
             </div>
 
             <!-- Data -->
@@ -2708,6 +2740,7 @@ function showAdminTab(tabId) {
     if (tabId === 'results-admin') renderResultsAdmin();
     if (tabId === 'draw-admin') renderDrawAdmin();
     if (tabId === 'nonrunner-admin') renderNonRunnerAdmin();
+    if (tabId === 'odds-admin') loadOddsTable();
 }
 
 function renderDrawAdmin() {
@@ -3138,6 +3171,156 @@ function importData(event) {
     };
     reader.readAsText(file);
     event.target.value = '';
+}
+
+// ============================================================
+//  UPDATE ODDS ADMIN
+// ============================================================
+function loadOddsTable() {
+    const tbody = document.getElementById('oddsTableBody');
+    tbody.innerHTML = '';
+    [...appState.horses].sort((a, b) => a.number - b.number).forEach(horse => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #eee';
+        tr.innerHTML = `
+            <td style="padding: 6px 8px; font-weight: bold;">${horse.number}</td>
+            <td style="padding: 6px 8px;">${horse.name}</td>
+            <td style="padding: 6px 8px;"><span class="odds-badge" style="font-size: 0.85em;">${horse.odds}</span></td>
+            <td style="padding: 6px 8px;"><input type="text" data-horse-number="${horse.number}" value="${horse.odds}" style="width: 80px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95em;"></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function fractionalToDecimal(frac) {
+    frac = frac.trim();
+    if (frac.includes('/')) {
+        const parts = frac.split('/');
+        const num = parseFloat(parts[0]);
+        const den = parseFloat(parts[1]);
+        if (den === 0 || isNaN(num) || isNaN(den)) return null;
+        return Math.round((num / den + 1) * 10) / 10;
+    }
+    const n = parseFloat(frac);
+    return isNaN(n) ? null : n;
+}
+
+function saveAllOdds() {
+    const inputs = document.querySelectorAll('#oddsTableBody input[data-horse-number]');
+    let updated = 0;
+    inputs.forEach(input => {
+        const horseNum = parseInt(input.getAttribute('data-horse-number'));
+        const newOdds = input.value.trim();
+        if (!newOdds) return;
+        const horse = appState.horses.find(h => h.number === horseNum);
+        if (!horse) return;
+        if (horse.odds === newOdds) return;
+        const dec = fractionalToDecimal(newOdds);
+        if (dec === null) return;
+        horse.odds = newOdds;
+        horse.oddsDecimal = dec;
+        updated++;
+    });
+    if (updated > 0) {
+        saveToFirebase();
+        loadOddsTable();
+        renderAll();
+    }
+    const msg = document.getElementById('oddsSaveMsg');
+    msg.innerHTML = updated > 0
+        ? `<span style="color: green;">✅ Updated ${updated} horse(s)!</span>`
+        : '<span style="color: #999;">No changes detected.</span>';
+    setTimeout(() => { msg.innerHTML = ''; }, 4000);
+}
+
+function applyBulkOdds() {
+    const text = document.getElementById('bulkOddsPaste').value.trim();
+    if (!text) { alert('Paste some odds first!'); return; }
+    const lines = text.split('\n').filter(l => l.trim());
+    let applied = 0;
+    const results = [];
+
+    // Helper to find horse by name (case-insensitive, handles apostrophe variants)
+    const cleanName = n => n.toLowerCase().replace(/['\u2019`\u2018]/g, "'").replace(/\s+/g, ' ').trim();
+    function findHorse(name) {
+        const target = cleanName(name);
+        // Exact match
+        let h = appState.horses.find(h => cleanName(h.name) === target);
+        if (h) return h;
+        // Partial match
+        h = appState.horses.find(h => cleanName(h.name).includes(target) || target.includes(cleanName(h.name)));
+        if (h) return h;
+        // Also check reserves
+        h = (appState.reserves || []).find(h => cleanName(h.name) === target);
+        if (h) return h;
+        h = (appState.reserves || []).find(h => cleanName(h.name).includes(target) || target.includes(cleanName(h.name)));
+        return h || null;
+    }
+
+    lines.forEach(line => {
+        // Skip header/junk lines
+        if (/^(BET365|SKYBET|Horse\s*Number|Best Odds|Each Way|New Account|Silk\d|silk|Odds shown|Forecast|KEY|1\/5|\$|£)/i.test(line.trim())) return;
+        if (line.trim().length < 3) return;
+
+        let horseName = null;
+        let odds = null;
+
+        // FORMAT 1: Racing Post tab-separated — "Horse Name \t7/1\t8/1\t..."
+        // Takes the FIRST odds column (first bookmaker)
+        const tabs = line.split('\t').map(s => s.trim()).filter(Boolean);
+        if (tabs.length >= 2) {
+            const firstOdds = tabs.slice(1).find(t => /^\d+\/\d+$/.test(t));
+            if (firstOdds) {
+                horseName = tabs[0].replace(/\s+$/, '');
+                odds = firstOdds;
+            }
+        }
+
+        // FORMAT 2: Oddschecker racecard — "Silk1 I Am Maximusg (FR) 68 ... 8/1"
+        if (!horseName) {
+            const rcMatch = line.match(/^Silk\d+\s+(.+?)(?:g|m|h)\s*\(/);
+            if (rcMatch) {
+                horseName = rcMatch[1].trim();
+                const rcOdds = line.match(/(\d+\/\d+)\s*$/);
+                if (rcOdds) odds = rcOdds[1];
+            }
+        }
+
+        // FORMAT 3: Simple — "Horse Name, 10/1" or "Horse Name - 10/1"
+        if (!horseName) {
+            const simpleMatch = line.match(/^(.+?)[,\-\u2013\u2014]\s*(\d+\/\d+)\s*$/);
+            if (simpleMatch) { horseName = simpleMatch[1].trim(); odds = simpleMatch[2]; }
+        }
+
+        // FORMAT 4: Numbered — "1. Horse Name 10/1"
+        if (!horseName) {
+            const numMatch = line.match(/^\d+\.?\s+(.+?)\s+(\d+\/\d+)\s*$/);
+            if (numMatch) { horseName = numMatch[1].trim(); odds = numMatch[2]; }
+        }
+
+        if (!horseName || !odds) return;
+        const horse = findHorse(horseName);
+        if (!horse) { results.push('\u26a0\ufe0f ' + horseName); return; }
+        const dec = fractionalToDecimal(odds);
+        if (dec === null) return;
+        horse.odds = odds;
+        horse.oddsDecimal = dec;
+        applied++;
+        results.push('\u2705 ' + horse.name + ' \u2192 ' + odds);
+    });
+
+    if (applied > 0) {
+        saveToFirebase();
+        loadOddsTable();
+        renderAll();
+    }
+    document.getElementById('bulkOddsPaste').value = '';
+    const msg = document.getElementById('oddsSaveMsg');
+    const unmatched = results.filter(r => r.startsWith('\u26a0'));
+    msg.innerHTML = applied > 0
+        ? `<span style="color: green;">\u2705 Updated odds for ${applied} horse(s)!</span>${unmatched.length ? '<br><small style="color:#e67e22;">Unmatched: ' + unmatched.join(', ') + '</small>' : ''}`
+        : '<span style="color: #e67e22;">\u26a0\ufe0f No matching horses found. Try pasting from Racing Post or Oddschecker.</span>';
+    setTimeout(() => { msg.innerHTML = ''; }, 8000);
 }
 
 // Close modals on Escape
