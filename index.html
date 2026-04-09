@@ -3227,14 +3227,20 @@ function importData(event) {
 function loadOddsTable() {
     const tbody = document.getElementById('oddsTableBody');
     tbody.innerHTML = '';
-    [...appState.horses].sort((a, b) => a.number - b.number).forEach(horse => {
+    const activeReserveNums = Object.values(appState.reserveAssignments || {});
+    const activeReserves = (appState.reserves || []).filter(r => activeReserveNums.includes(r.number));
+    const allHorses = [...appState.horses, ...activeReserves].sort((a, b) => a.number - b.number);
+    allHorses.forEach(horse => {
+        const isNR = isNonRunner(horse.number);
+        const isReserve = activeReserveNums.includes(horse.number);
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid #eee';
+        if (isNR) tr.style.opacity = '0.4';
         tr.innerHTML = `
             <td style="padding: 6px 8px; font-weight: bold;">${horse.number}</td>
-            <td style="padding: 6px 8px;">${horse.name}</td>
+            <td style="padding: 6px 8px;">${horse.name}${isNR ? ' <span style="color:#dc3545; font-size:0.8em;">(N/R)</span>' : ''}${isReserve ? ' <span style="color:#17a2b8; font-size:0.8em;">(Reserve)</span>' : ''}</td>
             <td style="padding: 6px 8px;"><span class="odds-badge" style="font-size: 0.85em;">${horse.odds}</span></td>
-            <td style="padding: 6px 8px;"><input type="text" data-horse-number="${horse.number}" value="${horse.odds}" style="width: 80px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95em;"></td>
+            <td style="padding: 6px 8px;"><input type="text" data-horse-number="${horse.number}" value="${horse.odds}" style="width: 80px; padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95em;"${isNR ? ' disabled' : ''}></td>
         `;
         tbody.appendChild(tr);
     });
@@ -3260,7 +3266,7 @@ function saveAllOdds() {
         const horseNum = parseInt(input.getAttribute('data-horse-number'));
         const newOdds = input.value.trim();
         if (!newOdds) return;
-        const horse = appState.horses.find(h => h.number === horseNum);
+        const horse = findAnyHorse(horseNum);
         if (!horse) return;
         if (horse.odds === newOdds) return;
         const dec = fractionalToDecimal(newOdds);
