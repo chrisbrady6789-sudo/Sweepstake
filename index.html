@@ -2358,15 +2358,45 @@ function renderRunnersPage() {
     const grid = document.getElementById('horseGrid');
     grid.innerHTML = '';
 
-    const horses = [...appState.horses].sort((a, b) => a.number - b.number);
+    // Build reverse draw map: horseNumber -> person
     const drawReverse = {};
     Object.entries(appState.draws).forEach(([person, horseNum]) => {
         drawReverse[horseNum] = person;
     });
 
-    horses.forEach(horse => {
-        const drawnBy = drawReverse[horse.number];
+    // Build reserve assignment reverse map: reserveNumber -> person
+    const reserveReverse = {};
+    Object.entries(appState.reserveAssignments || {}).forEach(([person, resNum]) => {
+        reserveReverse[resNum] = person;
+    });
+
+    // Collect active reserve horses (ones assigned to replace non-runners)
+    const activeReserves = (appState.reserves || []).filter(r => reserveReverse[r.number]);
+
+    // Combine main horses + active reserves
+    const allHorses = [...appState.horses, ...activeReserves].sort((a, b) => a.number - b.number);
+
+    allHorses.forEach(horse => {
+        const isReserve = activeReserves.some(r => r.number === horse.number);
         const nonRunner = isNonRunner(horse.number);
+        const drawnBy = isReserve ? reserveReverse[horse.number] : drawReverse[horse.number];
+
+        // For non-runner originals, show who had them and their replacement
+        let footerDrawn = '';
+        if (nonRunner && drawnBy) {
+            const resNum = appState.reserveAssignments && appState.reserveAssignments[drawnBy];
+            const resHorse = resNum ? (appState.reserves || []).find(r => r.number === resNum) : null;
+            footerDrawn = resHorse
+                ? '👤 ' + drawnBy + ' → ' + resHorse.name
+                : '👤 ' + drawnBy + ' (awaiting reserve)';
+        } else if (isReserve && drawnBy) {
+            footerDrawn = '👤 ' + drawnBy + ' (reserve)';
+        } else if (drawnBy) {
+            footerDrawn = '👤 ' + drawnBy;
+        } else {
+            footerDrawn = '⏳ Not drawn';
+        }
+
         const card = document.createElement('div');
         card.className = 'horse-card' + (nonRunner ? ' non-runner' : '');
         card.setAttribute('data-odds', horse.oddsDecimal);
@@ -2375,13 +2405,16 @@ function renderRunnersPage() {
         card.setAttribute('data-trainer', horse.trainer.toLowerCase());
         card.onclick = () => openHorseModal(horse.number);
 
+        const headerLabel = nonRunner ? '🚫 N/R' : (isReserve ? '🔄 ' + horse.odds : horse.odds);
+        const badgeLabel = nonRunner ? 'NON-RUNNER' : horse.odds;
+
         card.innerHTML = `
             <div class="horse-card-header" style="background: linear-gradient(135deg, ${horse.color}, ${horse.colorSecondary || '#333'});">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     ${getSilkHtml(horse, 40, true)}
-                    <span style="font-weight: bold; font-size: 1.05em;">${horse.name}</span>
+                    <span style="font-weight: bold; font-size: 1.05em;">${horse.name}${isReserve ? ' <span style="font-size:0.75em; opacity:0.8;">(Reserve)</span>' : ''}</span>
                 </div>
-                <span class="horse-number">${nonRunner ? '🚫 N/R' : horse.odds}</span>
+                <span class="horse-number">${headerLabel}</span>
             </div>
             <div class="horse-card-meta">
                 <div class="form-letters">${getFormHtml(horse.form)}</div>
@@ -2393,8 +2426,8 @@ function renderRunnersPage() {
                 <div class="horse-info-row"><span>Age / Weight</span><span>${horse.age}yo · ${horse.weight}</span></div>
             </div>
             <div class="horse-card-footer">
-                <span class="drawn-by">${drawnBy ? '👤 ' + drawnBy : '⏳ Not drawn'}</span>
-                <span class="odds-badge">${nonRunner ? 'NON-RUNNER' : horse.odds}</span>
+                <span class="drawn-by">${footerDrawn}</span>
+                <span class="odds-badge">${badgeLabel}</span>
             </div>
         `;
 
@@ -2430,12 +2463,15 @@ function filterByOdds(filter, btn) {
 //  HORSE MODAL
 // ============================================================
 function openHorseModal(horseNumber) {
-    const horse = appState.horses.find(h => h.number === horseNumber);
+    let horse = appState.horses.find(h => h.number === horseNumber);
+    if (!horse) horse = (appState.reserves || []).find(h => h.number === horseNumber);
     if (!horse) return;
 
     const drawReverse = {};
     Object.entries(appState.draws).forEach(([person, num]) => { drawReverse[num] = person; });
-    const drawnBy = drawReverse[horse.number];
+    const reserveReverse = {};
+    Object.entries(appState.reserveAssignments || {}).forEach(([person, num]) => { reserveReverse[num] = person; });
+    const drawnBy = drawReverse[horse.number] || reserveReverse[horse.number];
 
     document.getElementById('modalHeader').style.background = `linear-gradient(135deg, ${horse.color}, ${horse.colorSecondary || '#333'})`;
     document.getElementById('modalHorseName').textContent = `${horse.number}. ${horse.name}`;
@@ -2536,7 +2572,7 @@ function renderSweepstakePage() {
             card.style.cursor = 'pointer';
             card.style.borderLeftColor = activeHorse.color;
         }
-        if (activeHorse && !reserveHorse) card.onclick = () => openHorseModal(activeHorse.number);
+        if (activeHorse) card.onclick = () => openHorseModal(activeHorse.number);
 
         let statusHtml;
         if (isUnlucky) {
@@ -2587,7 +2623,10 @@ function renderPredictionsPage() {
         const sel = document.getElementById(id);
         const currentHorseVal = sel.value;
         sel.innerHTML = '<option value="">-- Select Horse --</option>';
-        [...appState.horses].sort((a, b) => a.number - b.number).forEach(h => {
+        const allRunners = [...appState.horses.filter(h => !isNonRunner(h.number))];
+        const activeReserves = (appState.reserves || []).filter(r =>
+            Object.values(appState.reserveAssignments || {}).includes(r.number));
+        [...allRunners, ...activeReserves].sort((a, b) => a.number - b.number).forEach(h => {
             const opt = document.createElement('option');
             opt.value = h.number;
             opt.textContent = `${h.number}. ${h.name} (${h.odds})`;
@@ -2650,9 +2689,9 @@ function renderPredictionBoard() {
 
     board.innerHTML = '';
     Object.entries(predictions).sort(([a], [b]) => a.localeCompare(b)).forEach(([person, pred]) => {
-        const h1 = appState.horses.find(h => h.number === pred.first);
-        const h2 = appState.horses.find(h => h.number === pred.second);
-        const h3 = appState.horses.find(h => h.number === pred.third);
+        const h1 = findAnyHorse(pred.first);
+        const h2 = findAnyHorse(pred.second);
+        const h3 = findAnyHorse(pred.third);
 
         const card = document.createElement('div');
         card.className = 'prediction-card';
@@ -2688,11 +2727,14 @@ function renderRaceDayPage() {
     const drawReverse = {};
     Object.entries(appState.draws).forEach(([person, num]) => { drawReverse[num] = person; });
 
+    const reserveReverse = {};
+    Object.entries(appState.reserveAssignments || {}).forEach(([person, num]) => { reserveReverse[num] = person; });
+
     results.forEach(result => {
-        const horse = appState.horses.find(h => h.number === result.horseNumber);
+        const horse = findAnyHorse(result.horseNumber);
         if (!horse) return;
 
-        const drawnBy = drawReverse[horse.number] || '-';
+        const drawnBy = drawReverse[horse.number] || reserveReverse[horse.number] || '-';
         const isWinner = result.position === 1;
         const isPlaced = result.position <= 3;
 
@@ -2865,6 +2907,12 @@ function getAvailableReserves() {
     // Reserves not yet assigned to anyone
     const assignedReserves = new Set(Object.values(appState.reserveAssignments || {}));
     return (appState.reserves || []).filter(r => !assignedReserves.has(r.number));
+}
+
+function findAnyHorse(horseNumber) {
+    return appState.horses.find(h => h.number === horseNumber)
+        || (appState.reserves || []).find(h => h.number === horseNumber)
+        || null;
 }
 
 function getEffectiveHorse(person) {
@@ -3369,11 +3417,11 @@ function renderPredictionCharts() {
         .slice(0, 10);
 
     const getHorseName = (num) => {
-        const h = appState.horses.find(h => h.number === Number(num));
+        const h = findAnyHorse(Number(num));
         return h ? h.name : 'Unknown';
     };
     const getHorseColor = (num) => {
-        const h = appState.horses.find(h => h.number === Number(num));
+        const h = findAnyHorse(Number(num));
         return h ? h.color : '#999';
     };
 
